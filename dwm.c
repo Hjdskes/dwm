@@ -59,8 +59,8 @@
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel, SchemeLast }; /* color schemes */
-enum { NetSupported, NetWMName, NetWMState,
-       NetWMFullscreen, NetActiveWindow, NetWMWindowType,
+enum { NetSupported, NetWMName, NetWMState, NetWMFullscreen,
+       NetWMDemandsAttention, NetActiveWindow, NetWMWindowType, 
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
@@ -580,6 +580,10 @@ clientmessage(XEvent *e) {
 		if(cme->data.l[1] == netatom[NetWMFullscreen] || cme->data.l[2] == netatom[NetWMFullscreen])
 			setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */
 			              || (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ && !c->isfullscreen)));
+		else if(cme->data.l[1] == netatom[NetWMDemandsAttention]) {
+			c->isurgent = (cme->data.l[0] == 1 || (cme->data.l[0] == 2 && !c->isurgent));
+			drawbar(c->mon);
+		}
 	}
 	else if(cme->message_type == netatom[NetActiveWindow]) {
 		if(!ISVISIBLE(c)) {
