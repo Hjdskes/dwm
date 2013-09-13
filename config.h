@@ -11,7 +11,7 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]            = "-*-terminus-medium-r-*-*-16-*-*-*-*-*-*-*";
+static const char font[]            = "Cantarell 9";
 static const char normbordercolor[] = "#353535";
 static const char normbgcolor[]     = "#353535";
 static const char normfgcolor[]     = "#F9F9F9";
@@ -23,7 +23,7 @@ static const char urgfgcolor[]      = "#DC322F";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
-static const char chatclient[]           = "Skype™";
+static const char chatclient[]           = "jente_etnej - Skype™";
 static const char clock_fmt[]            = "%a %d %b, %R";
 static const int nmaster                 = 1;
 static const Bool showbar                = True;
@@ -40,6 +40,7 @@ static const Rule rules[] = {
     { "Skype",              NULL,       NULL,               1 << 1,     False,      -1 },
     { "Skype",              NULL,       "Call with",        1 << 1,     True,       -1 },
     { "Gnome-terminal",	    NULL,       NULL,               1 << 2,     False,      -1 },
+    { "Gedit",              NULL,       NULL,               1 << 2,     False,      -1 },
     { "Audacious",          NULL,       NULL,               1 << 3,     False,      -1 },
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       -1 },
     { "Gimp",               NULL,       NULL,               1 << 3,     False,      -1 },
