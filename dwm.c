@@ -60,7 +60,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeLast }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeUrg, SchemeLast }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMFullscreen,
        NetWMDemandsAttention, NetActiveWindow, NetWMWindowType, 
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -414,7 +414,7 @@ attachstack(Client *c) {
 }
 
 void
-bstack(Monitor *m) 
+bstack(Monitor *m) {
 	unsigned int i, n, w, mh, mx, tx;
 	Client *c;
 
@@ -422,7 +422,7 @@ bstack(Monitor *m)
 	if(n == 0)
 		return;
 
-	if(n > m->nmasters[m->curtag])
+	if(n > m->nmaster)
 		mh = m->nmaster ? m->wh * m->mfact : 0;
 	else
 		mh = m->wh;
@@ -568,6 +568,8 @@ cleanup(void) {
 	drw_clr_free(scheme[SchemeSel].border);
 	drw_clr_free(scheme[SchemeSel].bg);
 	drw_clr_free(scheme[SchemeSel].fg);
+	drw_clr_free(scheme[SchemeUrg].bg);
+	drw_clr_free(scheme[SchemeUrg].fg);
 	drw_free(drw);
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
@@ -799,7 +801,7 @@ drawbar(Monitor *m) {
 		if(!(m->tagset[m->seltags] & 1 << i) && !(occ & 1 << i))
 			continue;
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
+		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i], urg & 1 << i);
 		x += w;
 	}
@@ -1656,6 +1658,8 @@ setup(void) {
 	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor);
 	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
 	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
+	scheme[SchemeUrg].bg = drw_clr_create(drw, urgbgcolor);
+	scheme[SchemeUrg].fg = drw_clr_create(drw, urgbgcolor);
 	/* init bars */
 	updatebars();
 	updatestatus();
