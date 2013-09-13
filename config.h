@@ -20,15 +20,15 @@ static const char selbgcolor[]      = "#353535";
 static const char selfgcolor[]      = "#4A90D9";
 static const char urgbgcolor[]      = "#353535";
 static const char urgfgcolor[]      = "#DC322F";
-static const unsigned int borderpx       = 1;
-static const unsigned int snap           = 2;
-static const float mfact                 = 0.63;
-static const char chatclient[]           = "jente_etnej - Skype™";
-static const char clock_fmt[]            = "%a %d %b, %R";
-static const int nmaster                 = 1;
-static const Bool showbar                = True;
-static const Bool topbar                 = True;
-static const Bool resizehints            = False;
+static const unsigned int borderpx  = 2;
+static const unsigned int snap      = 2;
+static const float mfact            = 0.63;
+static const char chatclient[]      = "jente_etnej - Skype™";
+static const char clock_fmt[]       = "%a %d %b, %R";
+static const int nmaster            = 1;
+static const Bool showbar           = True;
+static const Bool topbar            = True;
+static const Bool resizehints       = False;
 
 /* tagging */
 static const char *tags[] = { "web", "chill", "term", "misc" };
