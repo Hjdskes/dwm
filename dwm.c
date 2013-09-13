@@ -148,6 +148,7 @@ static void arrangemon(Monitor *m);
 static void attach(Client *c);
 static void attachstack(Client *c);
 static void buttonpress(XEvent *e);
+static void chat(Monitor *m);
 static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
@@ -449,6 +450,56 @@ buttonpress(XEvent *e) {
 		if(click == buttons[i].click && buttons[i].func && buttons[i].button == ev->button
 		&& CLEANMASK(buttons[i].mask) == CLEANMASK(ev->state))
 			buttons[i].func(click == ClkTagBar && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+}
+
+void
+chat(Monitor *m) {
+	unsigned int n, cols, rows, cn, rn, i, cx, cy, cw, ch, ww;
+	Client *c, *bl = NULL;
+
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++)
+		if(strstr(c->name, chatclient))
+			bl = c;
+	if(n == 0)
+		return;
+
+	/* buddy list */
+	ww = (bl ? m->mfacts[m->curtag] * m->ww : m->ww);
+	if(bl) {
+		resize(bl, m->wx + ww, m->wy, m->ww - ww - 2 * bl->bw, m->wh - 2 * bl->bw, False);
+		if(--n == 0)
+			return;
+	}
+
+	/* grid dimensions */
+	for(cols = 0; cols <= n/2; cols++)
+		if(cols*cols >= n)
+			break;
+	if(n == 5) /* set layout against the general calculation: not 1:2:2, but 2:3 */
+		cols = 2;
+	rows = n/cols;
+
+	/* window geometries */
+	cw = cols ? ww / cols : ww;
+	cn = 0; /* current column number */
+	rn = 0; /* current row number */
+	for(i = 0, c = nexttiled(m->clients); c; i++, c = nexttiled(c->next)) {
+		if(c == bl) {
+			--i;
+			continue;
+		}
+		if(i/rows + 1 > cols - n%cols)
+			rows = n/cols + 1;
+		ch = rows ? m->wh / rows : m->wh;
+		cx = m->wx + cn*cw;
+		cy = m->wy + rn*ch;
+		resize(c, cx, cy, cw - 2 * c->bw, ch - 2 * c->bw, False);
+		rn++;
+		if(rn >= rows) {
+			rn = 0;
+			cn++;
+		}
+	}
 }
 
 void
