@@ -827,6 +827,7 @@ drawbar(Monitor *m) {
 		strftime(clock, 38, clock_fmt, localtime(&current));
 		drw_setscheme(drw, &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, NULL, 0);
+		w = MIN(w, TEXTW(clock));
 		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
 		drw_text(drw, x, 0, w, bh, clock, 0); 
 	}
