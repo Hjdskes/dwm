@@ -66,7 +66,7 @@
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
 enum { SchemeNorm, SchemeSel, SchemeUrg, SchemeLast }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMFullscreen,
-       NetWMDemandsAttention, NetActiveWindow, NetWMWindowType, 
+       NetWMDemandsAttention, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkClock,
@@ -806,7 +806,7 @@ drawbar(Monitor *m) {
 			continue;
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, tags[i], urg & 1 << i);
+		drw_text(drw, x, 0, w, bh, tags[i], 0);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
@@ -1665,7 +1665,7 @@ setup(void) {
 	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
 	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
 	scheme[SchemeUrg].bg = drw_clr_create(drw, urgbgcolor);
-	scheme[SchemeUrg].fg = drw_clr_create(drw, urgbgcolor);
+	scheme[SchemeUrg].fg = drw_clr_create(drw, urgfgcolor);
 	/* init bars */
 	updatebars();
 	updatestatus();
