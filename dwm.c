@@ -149,6 +149,7 @@ static void arrange(Monitor *m);
 static void arrangemon(Monitor *m);
 static void attach(Client *c);
 static void attachstack(Client *c);
+static void bstack(Monitor *m);
 static void buttonpress(XEvent *e);
 static void chat(Monitor *m);
 static void checkotherwm(void);
@@ -410,6 +411,32 @@ void
 attachstack(Client *c) {
 	c->snext = c->mon->stack;
 	c->mon->stack = c;
+}
+
+void
+bstack(Monitor *m) 
+	unsigned int i, n, w, mh, mx, tx;
+	Client *c;
+
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0)
+		return;
+
+	if(n > m->nmasters[m->curtag])
+		mh = m->nmaster ? m->wh * m->mfact : 0;
+	else
+		mh = m->wh;
+	for(i = mx = tx = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+		if(i < m->nmaster) {
+			w = (m->ww - mx) / (MIN(n, m->nmaster) - i);
+			resize(c, m->wx + mx, m->wy, w - (2*c->bw), mh - (2*c->bw), False);
+			mx += WIDTH(c);
+		}
+		else {
+			w = (m->ww - tx) / (n - i);
+			resize(c, m->wx + tx, m->wy + mh, w - (2*c->bw), m->wh - mh - (2*c->bw), False);
+			tx += WIDTH(c);
+		}
 }
 
 void
@@ -1120,7 +1147,7 @@ manage(Window w, XWindowAttributes *wa) {
 	                (unsigned char *) &(c->win), 1);
 	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
 	setclientstate(c, NormalState);
-	if (c->mon == selmon)
+	if(c->mon == selmon)
 		unfocus(selmon->sel, False);
 	c->mon->sel = c;
 	arrange(c->mon);
@@ -1831,7 +1858,7 @@ updatebars(void) {
 		.event_mask = ButtonPressMask|ExposureMask
 	};
 	for(m = mons; m; m = m->next) {
-		if (m->barwin)
+		if(m->barwin)
 			continue;
 		m->barwin = XCreateWindow(dpy, root, m->wx, m->by, m->ww, bh, 0, DefaultDepth(dpy, screen),
 		                          CopyFromParent, DefaultVisual(dpy, screen),
