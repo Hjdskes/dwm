@@ -469,7 +469,7 @@ chat(Monitor *m) {
 		return;
 
 	/* buddy list */
-	ww = (bl ? m->mfacts[m->curtag] * m->ww : m->ww);
+	ww = (bl ? m->mfact * m->ww : m->ww);
 	if(bl) {
 		resize(bl, m->wx + ww, m->wy, m->ww - ww - 2 * bl->bw, m->wh - 2 * bl->bw, False);
 		if(--n == 0)
@@ -795,13 +795,13 @@ drawbar(Monitor *m) {
 	if((w = x - xx) > bh) {
 		x = xx;
 		time(&current);
-		strftime(clock, 38, clock_fmt, localtime(&current);
+		strftime(clock, 38, clock_fmt, localtime(&current));
 		clockw = TEXTW(clock);
 		drw_setscheme(drw, &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, NULL, 0);
-		dc.w = MIN(dc.w, clockw);
-		dc.x = MAX(dc.x (m->mw / 2) - (clockw / 2));
-		drw_text(drw, dc.x, 0, dc.w, bh, clock, 0); 
+		w = MIN(w, clockw);
+		x = MAX(x, (m->mw / 2) - (clockw / 2));
+		drw_text(drw, x, 0, w, bh, clock, 0); 
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
