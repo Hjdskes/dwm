@@ -2055,7 +2055,7 @@ updatetitle(Client *c) {
 
 void
 updatestatus(void) {
-	gettextprop(root, XA_WM_NAME, stext, sizeof(stext))
+	gettextprop(root, XA_WM_NAME, stext, sizeof(stext));
 	drawbar(selmon);
 }
 
