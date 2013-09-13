@@ -756,7 +756,7 @@ dirtomon(int dir) {
 
 void
 drawbar(Monitor *m) {
-	int x, xx, w, clockw;
+	int x, xx, w;
 	unsigned int i, occ = 0, urg = 0;
 	time_t current;
 	char clock[38];
@@ -796,11 +796,9 @@ drawbar(Monitor *m) {
 		x = xx;
 		time(&current);
 		strftime(clock, 38, clock_fmt, localtime(&current));
-		clockw = TEXTW(clock);
 		drw_setscheme(drw, &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, NULL, 0);
-		w = MIN(w, clockw);
-		x = MAX(x, (m->mw / 2) - (clockw / 2));
+		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
 		drw_text(drw, x, 0, w, bh, clock, 0); 
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
