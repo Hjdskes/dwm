@@ -2135,7 +2135,9 @@ updatewmhints(Client *c) {
 
 void
 view(const Arg *arg) {
+	int di;
 	unsigned int i;
+	Window win, dummy;
 
 	if((arg->ui & TAGMASK) == selmon->tagset[selmon->seltags])
 		return;
@@ -2158,6 +2160,10 @@ view(const Arg *arg) {
 	selmon->lt[selmon->sellt]= selmon->lts[selmon->curtag];
 	focus(NULL);
 	arrange(selmon);
+
+	XQueryPointer(dpy, root, &dummy, &win, &di, &di, &di, &di, &i);
+	focus(wintoclient(win));
+	XFlush(dpy);
 }
 
 Client *
