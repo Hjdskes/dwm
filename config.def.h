@@ -1,24 +1,25 @@
 /* See LICENSE file for copyright and license details. */
 
 /* appearance */
-static const char font[]            = "Sans 9";
-static const char normbordercolor[] = "#444444";
-static const char normbgcolor[]     = "#222222";
-static const char normfgcolor[]     = "#bbbbbb";
-static const char selbordercolor[]  = "#005577";
-static const char selbgcolor[]      = "#005577";
-static const char selfgcolor[]      = "#eeeeee";
-static const char urgbgcolor[]      = "#222222";
-static const char urgfgcolor[]      = "#DC322F";
-static const unsigned int borderpx  = 1;        /* border pixel of windows */
-static const unsigned int snap      = 32;       /* snap pixel */
-static const Bool showbar           = True;     /* False means no bar */
-static const Bool topbar            = True;     /* False means bottom bar */
-static const char chatclient[]      = "Skype™";
-static const char clock_fmt[]       = "%a %d %b, %R";
-static const float mfact            = 0.55;     /* factor of master area size [0.05..0.95] */
-static const int nmaster            = 1;        /* number of clients in master area */
-static const Bool resizehints       = True;     /* True means respect size hints in tiled resizals */
+static const char font[]                 = "Sans 9";
+static const char normbordercolor[]      = "#444444";
+static const char normbgcolor[]          = "#222222";
+static const char normfgcolor[]          = "#bbbbbb";
+static const char selbordercolor[]       = "#005577";
+static const char selbgcolor[]           = "#005577";
+static const char selfgcolor[]           = "#eeeeee";
+static const char urgbgcolor[]           = "#222222";
+static const char urgfgcolor[]           = "#DC322F";
+static const unsigned int borderpx       = 1;        /* border pixel of windows */
+static const unsigned int snap           = 32;       /* snap pixel */
+static const Bool showbar                = True;     /* False means no bar */
+static const Bool topbar                 = True;     /* False means bottom bar */
+static const char chatclient[]           = "Skype™";
+static const char clock_fmt[]            = "%a %d %b, %R";
+static const float mfact                 = 0.55;     /* factor of master area size [0.05..0.95] */
+static const int nmaster                 = 1;        /* number of clients in master area */
+static const Bool resizehints            = True;     /* True means respect size hints in tiled resizals */
+static const unsigned int systrayspacing = 6;
 
 /* layouts */
 static const Layout layouts[] = {
