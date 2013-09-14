@@ -16,9 +16,28 @@ static const Bool showbar           = True;     /* False means no bar */
 static const Bool topbar            = True;     /* False means bottom bar */
 static const char chatclient[]      = "Skype™";
 static const char clock_fmt[]       = "%a %d %b, %R";
+static const float mfact            = 0.55;     /* factor of master area size [0.05..0.95] */
+static const int nmaster            = 1;        /* number of clients in master area */
+static const Bool resizehints       = True;     /* True means respect size hints in tiled resizals */
+
+/* layouts */
+static const Layout layouts[] = {
+  /* symbol  arrange */
+	{ "[]=", tile    },    /* first entry is default */
+	{ "[B]", bstack  },
+	{ "[C]", chat    },
+	{ "><>", NULL    },    /* no layout function means floating behavior */
+	{ "[M]", monocle },
+};
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const Tag tags[] = {
+	/* name	layout       mfact nmaster */
+	{ "1",  &layouts[0], -1,   -1 },
+	{ "2",  &layouts[0], -1,   -1 },
+	{ "3",  &layouts[0], -1,   -1 },
+	{ "4",  &layouts[3], -1,   -1 },
+};
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -28,20 +47,6 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            True,        -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       False,       -1 },
-};
-
-/* layout(s) */
-static const float mfact      = 0.55; /* factor of master area size [0.05..0.95] */
-static const int nmaster      = 1;    /* number of clients in master area */
-static const Bool resizehints = True; /* True means respect size hints in tiled resizals */
-
-static const Layout layouts[] = {
-	/* symbol     arrange function */
-	{ "[]=",      tile },    /* first entry is default */
-	{ "[B]",      bstack },
-	{ "[C]",      chat },
-	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
 };
 
 /* key definitions */

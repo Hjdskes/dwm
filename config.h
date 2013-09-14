@@ -30,8 +30,25 @@ static const Bool showbar           = True;
 static const Bool topbar            = True;
 static const Bool resizehints       = False;
 
+/* layouts */
+static const Layout layouts[] = {
+  /* symbol arrange */
+	{ "T",  tile },
+	{ "C",  chat },
+	{ "B",  bstack },
+	{ "M",  monocle },
+	{ "F",  NULL },
+};
+
 /* tagging */
-static const char *tags[] = { "web", "chill", "term", "misc" };
+static const Tag tags[] = {
+	/* name	     layout       mfact	nmaster */
+	{ "1 web",   &layouts[0], -1,	-1 },
+	{ "2 chill", &layouts[1], 0.80, -1 },
+	{ "3 term",  &layouts[0], -1,	-1 },
+	{ "4 misc",  &layouts[3], -1,	-1 },
+};
+
 
 static const Rule rules[] = {
     /*WM_CLASS              WM_CLASS    WM_NAME
@@ -51,16 +68,6 @@ static const Rule rules[] = {
     { "Evince",             NULL,       NULL,               1 << 3,     False,      -1 },
     { "libreoffice-writer", NULL,       NULL,               1 << 3,     False,      -1 },
     { "libreoffice-startcenter", NULL,  NULL,               1 << 3,     False,      -1 },
-};
-
-/* layout(s) */
-static const Layout layouts[] = {
-	/* symbol arrange */
-	{ "T",    tile    },
-	{ "C",    chat    },
-	{ "B",    bstack  },
-	{ "M",    monocle },
-	{ "F",    NULL    },
 };
 
 /* commands */
