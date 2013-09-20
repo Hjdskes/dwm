@@ -11,24 +11,25 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]            = "Cantarell 9";
-static const char normbordercolor[] = "#353535";
-static const char normbgcolor[]     = "#353535";
-static const char normfgcolor[]     = "#F9F9F9";
-static const char selbordercolor[]  = "#4A90D9";
-static const char selbgcolor[]      = "#353535";
-static const char selfgcolor[]      = "#4A90D9";
-static const char urgbgcolor[]      = "#353535";
-static const char urgfgcolor[]      = "#DC322F";
-static const unsigned int borderpx  = 2;
-static const unsigned int snap      = 2;
-static const float mfact            = 0.63;
-static const char chatclient[]      = "jente_etnej - Skype™";
-static const char clock_fmt[]       = "%a %d %b, %R";
-static const int nmaster            = 1;
-static const Bool showbar           = True;
-static const Bool topbar            = True;
-static const Bool resizehints       = False;
+static const char font[]                 = "Cantarell 9";
+static const char normbordercolor[]      = "#353535";
+static const char normbgcolor[]          = "#353535";
+static const char normfgcolor[]          = "#F9F9F9";
+static const char selbordercolor[]       = "#4A90D9";
+static const char selbgcolor[]           = "#353535";
+static const char selfgcolor[]           = "#4A90D9";
+static const char urgbgcolor[]           = "#353535";
+static const char urgfgcolor[]           = "#DC322F";
+static const unsigned int borderpx       = 2;
+static const unsigned int snap           = 2;
+static const unsigned int systrayspacing = 6;
+static const float mfact                 = 0.63;
+static const char chatclient[]           = "jente_etnej - Skype™";
+static const char clock_fmt[]            = "%a %d %b, %R";
+static const int nmaster                 = 1;
+static const Bool showbar                = True;
+static const Bool topbar                 = True;
+static const Bool resizehints            = False;
 
 /* layouts */
 static const Layout layouts[] = {
@@ -52,28 +53,29 @@ static const Tag tags[] = {
 
 static const Rule rules[] = {
     /*WM_CLASS              WM_CLASS    WM_NAME
-      class                 instance    title               tags mask   isfloating  monitor */
-    { "Firefox",            NULL,       NULL,               1,          False,      -1 },
-    { "Skype",              NULL,       NULL,               1 << 1,     False,      -1 },
-    { "Skype",              NULL,       "Call with",        1 << 1,     True,       -1 },
-    { "Gnome-terminal",	    NULL,       NULL,               1 << 2,     False,      -1 },
-    { "Gedit",              NULL,       NULL,               1 << 2,     False,      -1 },
-    { "Audacious",          NULL,       NULL,               1 << 3,     False,      -1 },
-    { "MPlayer",            NULL,       NULL,               1 << 3,     True,       -1 },
-    { "Gimp",               NULL,       NULL,               1 << 3,     False,      -1 },
-    { "Cheese",             NULL,       NULL,               1 << 3,     False,      -1 },
-    { "Brasero",            NULL,       NULL,               1 << 3,     False,      -1 },
-    { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      -1 },
-    { "VirtualBox",         NULL,       NULL,               1 << 3,     False,      -1 },
-    { "Evince",             NULL,       NULL,               1 << 3,     False,      -1 },
-    { "libreoffice-writer", NULL,       NULL,               1 << 3,     False,      -1 },
-    { "libreoffice-startcenter", NULL,  NULL,               1 << 3,     False,      -1 },
+      class                 instance    title               tags mask   isfloating  attachaside  monitor */
+    { "Firefox",            NULL,       NULL,               1,          False,      False,       -1 },
+    { "Skype",              NULL,       NULL,               1 << 1,     False,      False,       -1 },
+    { "Skype",              NULL,       "jente_etnej - Skype™", 1 << 1, False,      True,        -1 },
+    { "Skype",              NULL,       "Call with",        1 << 1,     True,       False,       -1 },
+    { "Gnome-terminal",	    NULL,       NULL,               1 << 2,     False,      True,        -1 },
+    { "Gedit",              NULL,       NULL,               1 << 2,     False,      False,       -1 },
+    { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
+    { "Gimp",               NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "Cheese",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "Brasero",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "VirtualBox",         NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "Evince",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "libreoffice-writer", NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "libreoffice-startcenter", NULL,  NULL,               1 << 3,     False,      False,       -1 },
 };
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", NULL };
+static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *term[]    = { "gnome-terminal", NULL };

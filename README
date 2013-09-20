@@ -14,6 +14,9 @@ This repository holds my personal fork of dwm. Besides changing colors, commands
 -removed square brackets around monocle indicator
 -xkeycodetokeysymfix
 -support for _NET_WM_STATE_DEMANDS_ATTENTION
+-pertag2
+-focus follow mouse tag
+-attachaside per window rule
 
 Requirements
 ------------

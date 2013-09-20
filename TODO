@@ -2,3 +2,16 @@
 		affecting the keyboard grab, see scrot -s for example)
 - add updategeom() hook for external tools like dzen
 - consider onscreenkeyboard hooks for tablet deployment
+
+**ToDo:**
+* Implement Cairo w/ Pango?
+* Wildcard skype webcams
+* Fix clock?
+* Resize tiled clients by dragging window borders?
+* Try adapt the way multimonitor is treated: make it like GNOME Shell - basically make the extra monitor one single tag on its own.
+
+**Issues:**
+* singular borders
+    * on multimonitor, you see monitor one's borders on monitor two and vice-versa.
+    * in gridlayout, we can't hide either the left or the right screen edge's border off-screen.
+

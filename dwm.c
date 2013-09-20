@@ -97,7 +97,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	Bool isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen;
+	Bool isfixed, isfloating, attachaside, isurgent, neverfocus, oldstate, isfullscreen;
 	Client *next;
 	Client *snext;
 	Monitor *mon;
@@ -153,6 +153,7 @@ typedef struct {
 	const char *title;
 	unsigned int tags;
 	Bool isfloating;
+	Bool attachaside;
 	int monitor;
 } Rule;
 
@@ -316,6 +317,7 @@ applyrules(Client *c) {
 		&& (!r->instance || strstr(instance, r->instance)))
 		{
 			c->isfloating = r->isfloating;
+			c->attachaside = r->attachaside;
 			c->tags |= r->tags;
 			for(m = mons; m && m->num != r->monitor; m = m->next);
 			if(m)
@@ -413,6 +415,18 @@ arrangemon(Monitor *m) {
 	strncpy(m->ltsymbol, m->lt[m->sellt]->symbol, sizeof m->ltsymbol);
 	if(m->lt[m->sellt]->arrange)
 		m->lt[m->sellt]->arrange(m);
+}
+
+void
+attachaside(Client *c) {
+	Client *at = nexttiled(c->mon->clients);
+
+	if(c->mon->sel == NULL || c->mon->sel->isfloating || !at) {
+		attach(c);
+		return;
+	}
+	c->next = at->next;
+	at->next = c;
 }
 
 void
@@ -1175,7 +1189,10 @@ manage(Window w, XWindowAttributes *wa) {
 		c->isfloating = c->oldstate = trans != None || c->isfixed;
 	if(c->isfloating)
 		XRaiseWindow(dpy, c->win);
-	attach(c);
+	if(c->attachaside)
+		attachaside(c);
+	else
+		attach(c);
 	attachstack(c);
 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
 	                (unsigned char *) &(c->win), 1);
