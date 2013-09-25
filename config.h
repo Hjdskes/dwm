@@ -80,12 +80,10 @@ static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *term[]    = { "gnome-terminal", NULL };
 static const char *browser[] = { "firefox", NULL };
-static const char *files[]   = { "nautilus", NULL };
-static const char *music[]   = { "audacious", NULL };
-static const char *skype[]   = { "skype", NULL };
 static const char *scrot[]   = { "gnome-screenshot", NULL };
 static const char *xkill[]   = { "xkill", NULL };
 static const char *lock[]    = { "slock", NULL };
+static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
 static const char *halt[]    = { "dmenu_shutdown", NULL };
 static const char *volup[]   = { "amixer", "-q", "sset", "Master", "5%+", "unmute", NULL };
 static const char *voldown[] = { "amixer", "-q", "sset", "Master", "5%-", "unmute", NULL };
@@ -104,12 +102,10 @@ static Key keys[] = {
 	{ MODKEY,                   XK_Escape,                  spawn,          {.v = halt } },
 	{ MODKEY,                   XK_s,                       spawn,          {.v = find } },
 	{ MODKEY,                   XK_o,                       spawn,          {.v = dmfm } },
-	{ MODKEY,                   XK_1,                       spawn,          {.v = term } },
-	{ MODKEY,                   XK_2,                       spawn,          {.v = browser } },
-	{ MODKEY,                   XK_3,                       spawn,          {.v = files } },
-	{ MODKEY,                   XK_4,                       spawn,          {.v = music } },
-	{ MODKEY,                   XK_5,                       spawn,          {.v = skype } },
+	{ MODKEY,                   XK_e,                       spawn,          {.v = term } },
+	{ MODKEY,                   XK_w,                       spawn,          {.v = browser } },
 	{ 0,                        XK_Print,                   spawn,          {.v = scrot } },
+	{ 0,                        XF86XK_Display,             spawn,          {.v = soff } },
 	{ 0,                        XF86XK_AudioRaiseVolume,    spawn,          {.v = volup } },
 	{ 0,                        XF86XK_AudioLowerVolume,    spawn,          {.v = voldown } },
 	{ 0,                        XF86XK_AudioMute,           spawn,          {.v = volmute } },
@@ -143,10 +139,10 @@ static Key keys[] = {
 	{ MODKEY,                   XK_b,                       setlayout,      {.v = &layouts[2] } },
 	{ MODKEY,                   XK_m,                       setlayout,      {.v = &layouts[3] } },
 	{ MODKEY,                   XK_f,                       setlayout,      {.v = &layouts[4] } },
-	TAGKEYS(                    XK_F1,                      0)
-	TAGKEYS(                    XK_F2,                      1)
-	TAGKEYS(                    XK_F3,                      2)
-	TAGKEYS(                    XK_F4,                      3)
+	TAGKEYS(                    XK_1,                       0)
+	TAGKEYS(                    XK_2,                       1)
+	TAGKEYS(                    XK_3,                       2)
+	TAGKEYS(                    XK_4,                       3)
 	{ MODKEY,                   XK_a,                       view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,         XK_a,                       tag,            {.ui = ~1 } },
 	{ MONKEY,                   XK_Left,                    focusmon,       {.i = -1 } },
