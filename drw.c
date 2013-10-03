@@ -154,7 +154,7 @@ drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *tex) {
 	if(!font || !text)
 		return;
 	pango_layout_set_markup(font->plo, text, len);
-	pango_layout_get_extents(font->plo, &r, 0);
+	pango_layout_get_extents(font->plo, 0, &r);
 	tex->h = r.height / PANGO_SCALE;
 	tex->w = r.width / PANGO_SCALE;
 }

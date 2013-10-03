@@ -64,7 +64,6 @@ static const Rule rules[] = {
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
     { "Gimp",               NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Cheese",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "Brasero",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "VirtualBox",         NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Evince",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
@@ -73,25 +72,26 @@ static const Rule rules[] = {
 };
 
 /* commands */
-static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *find[]    = { "dmenu_finder", NULL };
-static const char *dmfm[]    = { "dmenu_fm", NULL };
-static const char *term[]    = { "gnome-terminal", NULL };
-static const char *browser[] = { "firefox", NULL };
-static const char *scrot[]   = { "gnome-screenshot", NULL };
-static const char *xkill[]   = { "xkill", NULL };
-static const char *lock[]    = { "slock", NULL };
-static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
-static const char *halt[]    = { "dmenu_shutdown", NULL };
-static const char *volup[]   = { "amixer", "-q", "sset", "Master", "5%+", "unmute", NULL };
-static const char *voldown[] = { "amixer", "-q", "sset", "Master", "5%-", "unmute", NULL };
-static const char *volmute[] = { "amixer", "-q", "sset", "Master", "toggle", NULL };
-static const char *play[]    = { "audtool", "playback-playpause", NULL };
-static const char *next[]    = { "audtool", "playlist-advance", NULL };
-static const char *prev[]    = { "audtool", "playlist-reverse", NULL };
-static const char *stop[]    = { "audtool", "playback-stop", NULL };
+static const char *dmenu[] = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *find[]     = { "dmenu_finder", NULL };
+static const char *dmfm[]     = { "dmenu_fm", NULL };
+static const char *term[]     = { "gnome-terminal", NULL };
+static const char *browser[]  = { "firefox", NULL };
+static const char *skype[]    = { "skype", NULL };
+static const char *scrot[]    = { "gnome-screenshot", NULL };
+static const char *xkill[]    = { "xkill", NULL };
+static const char *lock[]     = { "slock", NULL };
+static const char *soff[]     = { "xset", "dpms", "force", "off", NULL };
+static const char *sup[]      = { "xbacklight", "-inc", "10", NULL };
+static const char *sdown[]    = { "xbacklight", "-dec", "10", NULL };
+static const char *halt[]     = { "dmenu_shutdown", NULL };
+static const char *volup[]    = { "amixer", "-q", "sset", "Master", "5%+", "unmute", NULL };
+static const char *voldown[]  = { "amixer", "-q", "sset", "Master", "5%-", "unmute", NULL };
+static const char *volmute[]  = { "amixer", "-q", "sset", "Master", "toggle", NULL };
+static const char *play[]     = { "audtool", "playback-playpause", NULL };
+static const char *next[]     = { "audtool", "playlist-advance", NULL };
+static const char *prev[]     = { "audtool", "playlist-reverse", NULL };
+static const char *stop[]     = { "audtool", "playback-stop", NULL };
 
 /* key definitions */
 static Key keys[] = {
@@ -158,10 +158,12 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkClock,             0,              Button2,        killclient,     {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = term } },
+	{ ClkStatusText,        0,              Button2,        spawn,          {.v = skype } },
 	{ ClkStatusText,        0,              Button3,        spawn,          {.v = volmute } },
 	{ ClkStatusText,        0,              Button4,        spawn,          {.v = volup } },
 	{ ClkStatusText,        0,              Button5,        spawn,          {.v = voldown } },
+	{ ClkStatusText,        MODKEY,         Button4,        spawn,          {.v = sup } },
+	{ ClkStatusText,        MODKEY,         Button5,        spawn,          {.v = sdown } },
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },

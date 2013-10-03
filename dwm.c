@@ -874,7 +874,7 @@ drawbar(Monitor *m) {
 		drw_text(drw, x, 0, w, bh, NULL, 0);
 		w = MIN(w, TEXTW(clock));
 		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
-		drw_text(drw, x, 0, w, bh, clock, 0); 
+		drw_text(drw, x, 0, w, bh, clock, 0);
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
@@ -1754,8 +1754,6 @@ sigchld(int unused) {
 
 void
 spawn(const Arg *arg) {
-	if(arg->v == dmenucmd)
-		dmenumon[0] = '0' + selmon->num;
 	if(fork() == 0) {
 		if(dpy)
 			close(ConnectionNumber(dpy));
