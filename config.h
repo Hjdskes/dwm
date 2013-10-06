@@ -72,26 +72,26 @@ static const Rule rules[] = {
 };
 
 /* commands */
-static const char *dmenu[] = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *find[]     = { "dmenu_finder", NULL };
-static const char *dmfm[]     = { "dmenu_fm", NULL };
-static const char *term[]     = { "gnome-terminal", NULL };
-static const char *browser[]  = { "firefox", NULL };
-static const char *skype[]    = { "skype", NULL };
-static const char *scrot[]    = { "gnome-screenshot", NULL };
-static const char *xkill[]    = { "xkill", NULL };
-static const char *lock[]     = { "slock", NULL };
-static const char *soff[]     = { "xset", "dpms", "force", "off", NULL };
-static const char *sup[]      = { "xbacklight", "-inc", "10", NULL };
-static const char *sdown[]    = { "xbacklight", "-dec", "10", NULL };
-static const char *halt[]     = { "dmenu_shutdown", NULL };
-static const char *volup[]    = { "amixer", "-q", "sset", "Master", "5%+", "unmute", NULL };
-static const char *voldown[]  = { "amixer", "-q", "sset", "Master", "5%-", "unmute", NULL };
-static const char *volmute[]  = { "amixer", "-q", "sset", "Master", "toggle", NULL };
-static const char *play[]     = { "audtool", "playback-playpause", NULL };
-static const char *next[]     = { "audtool", "playlist-advance", NULL };
-static const char *prev[]     = { "audtool", "playlist-reverse", NULL };
-static const char *stop[]     = { "audtool", "playback-stop", NULL };
+static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *find[]    = { "dmenu_finder", NULL };
+static const char *dmfm[]    = { "dmenu_fm", NULL };
+static const char *term[]    = { "gnome-terminal", NULL };
+static const char *browser[] = { "firefox", NULL };
+static const char *skype[]   = { "skype", NULL };
+static const char *scrot[]   = { "gnome-screenshot", NULL };
+static const char *xkill[]   = { "xkill", NULL };
+static const char *lock[]    = { "slock", NULL };
+static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
+static const char *sup[]     = { "xbacklight", "-inc", "10", NULL };
+static const char *sdown[]   = { "xbacklight", "-dec", "10", NULL };
+static const char *halt[]    = { "dmenu_shutdown", NULL };
+static const char *volup[]   = { "amixer", "-q", "sset", "Master", "5%+", "unmute", NULL };
+static const char *voldown[] = { "amixer", "-q", "sset", "Master", "5%-", "unmute", NULL };
+static const char *volmute[] = { "amixer", "-q", "sset", "Master", "toggle", NULL };
+static const char *play[]    = { "audtool", "playback-playpause", NULL };
+static const char *next[]    = { "audtool", "playlist-advance", NULL };
+static const char *prev[]    = { "audtool", "playlist-reverse", NULL };
+static const char *stop[]    = { "audtool", "playback-stop", NULL };
 
 /* key definitions */
 static Key keys[] = {
