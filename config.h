@@ -60,7 +60,7 @@ static const Rule rules[] = {
     { "Skype",              NULL,       "Call with",        1 << 1,     True,       False,       -1 },
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
     { "Gedit",              NULL,       NULL,               1 << 2,     False,      False,       -1 },
-	{ "Java",               NULL,       "Eclipse SDK",      1 << 2,     True,       False,       -1 },
+	{ "Java",               NULL,       NULL,               1 << 2,     True,       False,       -1 },
 	{ "Eclipse",            NULL,       NULL,               1 << 2,     False,      False,       -1 },
     { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
