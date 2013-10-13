@@ -418,21 +418,16 @@ arrangemon(Monitor *m) {
 }
 
 void
-attachaside(Client *c) {
-	Client *at = nexttiled(c->mon->clients);
-
-	if(c->mon->sel == NULL || c->mon->sel->isfloating || !at) {
-		attach(c);
-		return;
-	}
-	c->next = at->next;
-	at->next = c;
-}
-
-void
 attach(Client *c) {
-	c->next = c->mon->clients;
-	c->mon->clients = c;
+	if(c->attachaside && !(c->mon->sel == NULL || c->mon->sel->isfloating || !nexttiled(c->mon->clients))) {
+		Client *at = nexttiled(c->mon->clients);
+
+		c->next = at->next;
+		at->next = c;
+	} else {
+		c->next = c->mon->clients;
+		c->mon->clients = c;
+	}
 }
 
 void
@@ -1185,10 +1180,7 @@ manage(Window w, XWindowAttributes *wa) {
 		c->isfloating = c->oldstate = trans != None || c->isfixed;
 	if(c->isfloating)
 		XRaiseWindow(dpy, c->win);
-	if(c->attachaside)
-		attachaside(c);
-	else
-		attach(c);
+	attach(c);
 	attachstack(c);
 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
 	                (unsigned char *) &(c->win), 1);
@@ -1320,10 +1312,7 @@ nexttiled(Client *c) {
 void
 pop(Client *c) {
 	detach(c);
-	if(c->attachaside)
-		attachaside(c);
-	else
-		attach(c);
+	attach(c);
 	focus(c);
 	arrange(c->mon);
 }

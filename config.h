@@ -12,7 +12,7 @@
 
 /* appearance */
 static const char font[]                 = "Cantarell 9";
-static const char normbordercolor[]      = "#2D2D2D";
+static const char normbordercolor[]      = "#696969";
 static const char normbgcolor[]          = "#2D2D2D";
 static const char normfgcolor[]          = "#F9F9F9";
 static const char selbordercolor[]       = "#D64937";
