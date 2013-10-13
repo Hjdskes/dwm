@@ -1320,7 +1320,10 @@ nexttiled(Client *c) {
 void
 pop(Client *c) {
 	detach(c);
-	attach(c);
+	if(c->attachaside)
+		attachaside(c);
+	else
+		attach(c);
 	focus(c);
 	arrange(c->mon);
 }

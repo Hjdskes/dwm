@@ -12,15 +12,15 @@
 
 /* appearance */
 static const char font[]                 = "Cantarell 9";
-static const char normbordercolor[]      = "#353535";
-static const char normbgcolor[]          = "#353535";
+static const char normbordercolor[]      = "#2D2D2D";
+static const char normbgcolor[]          = "#2D2D2D";
 static const char normfgcolor[]          = "#F9F9F9";
-static const char selbordercolor[]       = "#4A90D9";
-static const char selbgcolor[]           = "#353535";
-static const char selfgcolor[]           = "#4A90D9";
-static const char urgbgcolor[]           = "#353535";
-static const char urgfgcolor[]           = "#DC322F";
-static const unsigned int borderpx       = 2;
+static const char selbordercolor[]       = "#D64937";
+static const char selbgcolor[]           = "#2D2D2D";
+static const char selfgcolor[]           = "#D64937";
+static const char urgbgcolor[]           = "#2D2D2D";
+static const char urgfgcolor[]           = "#8B1C0F";
+static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const unsigned int systrayspacing = 6;
 static const float mfact                 = 0.63;
@@ -58,8 +58,10 @@ static const Rule rules[] = {
     { "Skype",              NULL,       NULL,               1 << 1,     False,      False,       -1 },
     { "Skype",              NULL,       "jente_etnej - Skype™", 1 << 1, False,      True,        -1 },
     { "Skype",              NULL,       "Call with",        1 << 1,     True,       False,       -1 },
-    { "Gnome-terminal",	    NULL,       NULL,               1 << 2,     False,      True,        -1 },
+	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
     { "Gedit",              NULL,       NULL,               1 << 2,     False,      False,       -1 },
+	{ "Java",               NULL,       "Eclipse SDK",      1 << 2,     True,       False,       -1 },
+	{ "Eclipse",            NULL,       NULL,               1 << 2,     False,      False,       -1 },
     { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
     { "Gimp",               NULL,       NULL,               1 << 3,     False,      False,       -1 },
@@ -75,10 +77,10 @@ static const Rule rules[] = {
 static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
-static const char *term[]    = { "gnome-terminal", NULL };
+static const char *term[]    = { "termite", NULL };
 static const char *browser[] = { "firefox", NULL };
 static const char *skype[]   = { "skype", NULL };
-static const char *scrot[]   = { "gnome-screenshot", NULL };
+static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y.png", NULL };
 static const char *xkill[]   = { "xkill", NULL };
 static const char *lock[]    = { "slock", NULL };
 static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
