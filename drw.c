@@ -56,7 +56,7 @@ drw_font_create(Display *dpy, const char *fontname) {
 	font->ascent = pango_font_metrics_get_ascent(metrics) / PANGO_SCALE;
 	font->descent = pango_font_metrics_get_descent(metrics) / PANGO_SCALE;
 	font->h = font->ascent + font->descent;
-	
+
 	pango_font_metrics_unref(metrics);
 	font->plo = pango_layout_new(font->pgc);
 	pango_layout_set_font_description(font->plo, font->pfd);
@@ -73,7 +73,6 @@ drw_font_free(Display *dpy, Fnt *font) {
 Clr *
 drw_clr_create(Drw *drw, const char *clrname) {
 	Clr *clr;
-	Colormap cmap;
 	XftColor color;
 
 	if(!drw)
@@ -81,8 +80,7 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	clr = (Clr *)calloc(1, sizeof(Clr));
 	if(!clr)
 		return NULL;
-	cmap = DefaultColormap(drw->dpy, drw->screen);
-	if(!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen), cmap, clrname, &color))
+	if(!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen), clrname, &color))
 		die("error, cannot allocate color '%s'\n", clrname);
 	clr->rgb = color;
 	return clr;
@@ -102,7 +100,7 @@ drw_setfont(Drw *drw, Fnt *font) {
 
 void
 drw_setscheme(Drw *drw, ClrScheme *scheme) {
-	if(drw && scheme) 
+	if(drw && scheme)
 		drw->scheme = scheme;
 }
 
@@ -132,7 +130,6 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	memcpy(buf, text, len);
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb.pixel : drw->scheme->fg->rgb.pixel);
 	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
 	pango_layout_set_markup(drw->font->plo, buf, len);
 	pango_xft_render_layout(d, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->plo, tx * PANGO_SCALE, ty * PANGO_SCALE);

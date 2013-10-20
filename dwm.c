@@ -38,10 +38,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
-#include <X11/Xft/Xft.h>
-#include <pango/pango.h>
-#include <pango/pangoxft.h>
-#include <pango/pango-font.h>
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
@@ -1670,7 +1666,7 @@ setup(void) {
 	fnt = drw_font_create(dpy, font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
-	bh = fnt->h + 2;
+	bh = fnt->h;
 	drw = drw_create(dpy, screen, root, sw, sh);
 	drw_setfont(drw, fnt);
 	updategeom();
