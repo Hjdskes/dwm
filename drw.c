@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
-#include <X11/Xft/Xft.h>
+#include <locale.h>
 
 #include "drw.h"
 #include "util.h"
@@ -45,16 +45,21 @@ drw_free(Drw *drw) {
 Fnt *
 drw_font_create(Display *dpy, const char *fontname) {
 	Fnt *font;
+	PangoFontMetrics *metrics;
 
 	font = (Fnt *)calloc(1, sizeof(Fnt));
 	if(!font)
 		return NULL;
-	if(!(font->xfont = XftFontOpenName(dpy, DefaultScreen(dpy), fontname))
-			&& !(font->xfont = XftFontOpenName(dpy, DefaultScreen(dpy), "fixed")))
-		die("error, cannot load font: '%s'\n", fontname);
-	font->ascent = font->xfont->ascent;
-	font->descent = font->xfont->descent;
+	font->pgc = pango_xft_get_context(dpy, DefaultScreen(dpy));
+	font->pfd = pango_font_description_from_string(fontname);
+	metrics = pango_context_get_metrics(font->pgc, font->pfd, pango_language_from_string(setlocale(LC_CTYPE, "")));
+	font->ascent = pango_font_metrics_get_ascent(metrics) / PANGO_SCALE;
+	font->descent = pango_font_metrics_get_descent(metrics) / PANGO_SCALE;
 	font->h = font->ascent + font->descent;
+	
+	pango_font_metrics_unref(metrics);
+	font->plo = pango_layout_new(font->pgc);
+	pango_layout_set_font_description(font->plo, font->pfd);
 	return font;
 }
 
@@ -68,6 +73,7 @@ drw_font_free(Display *dpy, Fnt *font) {
 Clr *
 drw_clr_create(Drw *drw, const char *clrname) {
 	Clr *clr;
+	Colormap cmap;
 	XftColor color;
 
 	if(!drw)
@@ -75,7 +81,8 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	clr = (Clr *)calloc(1, sizeof(Clr));
 	if(!clr)
 		return NULL;
-	if(!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen), clrname, &color))
+	cmap = DefaultColormap(drw->dpy, drw->screen);
+	if(!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen), cmap, clrname, &color))
 		die("error, cannot allocate color '%s'\n", clrname);
 	clr->rgb = color;
 	return clr;
@@ -95,7 +102,7 @@ drw_setfont(Drw *drw, Fnt *font) {
 
 void
 drw_setscheme(Drw *drw, ClrScheme *scheme) {
-	if(drw && scheme)
+	if(drw && scheme) 
 		drw->scheme = scheme;
 }
 
@@ -113,21 +120,22 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	if(!text || !drw->font)
 		return;
 	olen = strlen(text);
-	drw_font_getexts(drw->dpy, drw->font, text, olen, &tex);
+	drw_font_getexts(drw->font, text, olen, &tex);
 	th = drw->font->ascent + drw->font->descent;
-	ty = y + (h / 2) - (th / 2) + drw->font->ascent;
+	ty = y + (h / 2) - (th / 2);
 	tx = x + (h / 2);
 	/* shorten text if necessary */
 	for(len = MIN(olen, sizeof buf); len && (tex.w > w - tex.h || w < tex.h); len--)
-		drw_font_getexts(drw->dpy, drw->font, text, len, &tex);
+		drw_font_getexts(drw->font, text, len, &tex);
 	if(!len)
 		return;
 	memcpy(buf, text, len);
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
+	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb.pixel : drw->scheme->fg->rgb.pixel);
 	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
-	XftDrawStringUtf8(d, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->xfont, tx, ty, (XftChar8 *) buf, len);
-	XftDrawDestroy(d);
+	pango_layout_set_markup(drw->font->plo, buf, len);
+	pango_xft_render_layout(d, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->plo, tx * PANGO_SCALE, ty * PANGO_SCALE);
 }
 
 void
@@ -140,25 +148,24 @@ drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 
 
 void
-drw_font_getexts(Display *dpy, Fnt *font, const char *text, unsigned int len, Extnts *tex) {
-	XGlyphInfo ext;
+drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *tex) {
+	PangoRectangle r;
 
 	if(!font || !text)
 		return;
-	else {
-		XftTextExtentsUtf8(dpy, font->xfont, (XftChar8 *) text, len, &ext);
-		tex->h = font->ascent + font->descent;
-		tex->w = ext.width;
-	}
+	pango_layout_set_markup(font->plo, text, len);
+	pango_layout_get_extents(font->plo, 0, &r);
+	tex->h = r.height / PANGO_SCALE;
+	tex->w = r.width / PANGO_SCALE;
 }
 
 unsigned int
-drw_font_getexts_width(Display *dpy, Fnt *font, const char *text, unsigned int len) {
+drw_font_getexts_width(Fnt *font, const char *text, unsigned int len) {
 	Extnts tex;
 
 	if(!font)
 		return -1;
-	drw_font_getexts(dpy, font, text, len, &tex);
+	drw_font_getexts(font, text, len, &tex);
 	return tex.w;
 }
 

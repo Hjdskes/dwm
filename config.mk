@@ -15,8 +15,8 @@ XINERAMALIBS  = -lXinerama
 XINERAMAFLAGS = -DXINERAMA
 
 # includes and libs
-INCS = -I${X11INC} -I/usr/include/freetype2
-LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} -lutil -lXext -lXft -lfontconfig
+INCS = -I${X11INC} -I/usr/include/pango-1.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I/usr/include/freetype2
+LIBS = -L${X11LIB} -lX11 -lpangoxft-1.0 -lpangoft2-1.0 -lpango-1.0 -lfontconfig -lXft ${XINERAMALIBS}
 
 # flags
 CPPFLAGS = -D_BSD_SOURCE -D_POSIX_C_SOURCE=2 -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}
