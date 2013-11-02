@@ -15,11 +15,11 @@ static const char font[]                 = "Cantarell 9";
 static const char normbordercolor[]      = "#696969";
 static const char normbgcolor[]          = "#2D2D2D";
 static const char normfgcolor[]          = "#F9F9F9";
-static const char selbordercolor[]       = "#D64937";
+static const char selbordercolor[]       = "#4A90D9";
 static const char selbgcolor[]           = "#2D2D2D";
-static const char selfgcolor[]           = "#D64937";
+static const char selfgcolor[]           = "#4A90D9";
 static const char urgbgcolor[]           = "#2D2D2D";
-static const char urgfgcolor[]           = "#8B1C0F";
+static const char urgfgcolor[]           = "#DC322F";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const unsigned int systrayspacing = 6;
@@ -131,10 +131,10 @@ static Key keys[] = {
 	{ MODKEY,                   XK_space,                   setlayout,      {0} },
 	{ MODKEY,                   XK_Up,                      pushup,         {0} },
 	{ MODKEY,                   XK_Down,                    pushdown,       {0} },
-	/*{ MODKEY,                   XK_Left,                    cycle,          {.i = -1 } },
+	{ MODKEY,                   XK_Left,                    cycle,          {.i = -1 } },
 	{ MODKEY,                   XK_Right,                   cycle,          {.i = +1 } },
 	{ MODKEY|ShiftMask,         XK_Left,                    tagcycle,       {.i = -1 } },
-	{ MODKEY|ShiftMask,         XK_Right,                   tagcycle,       {.i = +1 } },*/
+	{ MODKEY|ShiftMask,         XK_Right,                   tagcycle,       {.i = +1 } },
 	{ MODKEY|ShiftMask,         XK_f,                       togglefloating, {0} },
 	{ MODKEY,                   XK_t,                       setlayout,      {.v = &layouts[0] } },
 	{ MODKEY,                   XK_c,                       setlayout,      {.v = &layouts[1] } },
@@ -173,5 +173,17 @@ static Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+	{ ClkClock,             0,              Button3,        gesture,        {0} },
 };
 
+/*may want to reuse the architecture present in buttons[] and keys[]*/
+static Gesture gestures[] = {
+	{ "dl", spawn, {.v = dmenu } },
+	{ "dr", spawn, {.v = dmenu } },
+	{ "l",  spawn, {.v = dmenu } },
+	{ "ld", spawn, {.v = dmenu } },
+	{ "lr", spawn, {.v = dmenu } },
+	{ "r",  spawn, {.v = dmenu } },
+	{ "rl", spawn, {.v = dmenu } },
+	{ "du", spawn, {.v = dmenu } },
+};
