@@ -994,9 +994,9 @@ focusstack(const Arg *arg) {
 
 void
 gesture(const Arg *arg) {
-	int x, y, dx, dy, q;
-	int valid = 0, listpos = 0, gestpos = 0, count = 0;
-	char move, currGest[10];
+	int x, y, dx, dy;
+	int gestpos = 0, count = 0;
+	char move, currgest[10];
 	XEvent ev;
 
 	if(XGrabPointer(dpy, root, False, MOUSEMASK, GrabModeAsync, GrabModeAsync,
@@ -1026,27 +1026,21 @@ gesture(const Arg *arg) {
 				else
 					move = dx < 0 ? 'l' : 'r';
 
-				if(move != currGest[gestpos - 1]) {
+				if(move != currgest[gestpos - 1]) {
 					if(gestpos > 9) {
 						ev.type++;
 						break;
 					}
-					currGest[gestpos] = move;
-					currGest[++gestpos] = '\0';
-
-					valid = 0;
-					for(q = 0; q < LENGTH(gestures); q++) {
-						if(!strcmp(currGest, gestures[q].name)) {
-							valid++;
-							listpos = q;
-						}
-					}
+					currgest[gestpos] = move;
+					currgest[++gestpos] = '\0';
 				}
 		}
 	} while(ev.type != ButtonRelease);
 	XUngrabPointer(dpy, CurrentTime);
-	if(valid)
-		gestures[listpos].func(&(gestures[listpos].arg));
+	for(int i = 0; i < LENGTH(gestures); i++) {
+		if(strcmp(currgest, gestures[i].name) == 0)
+			gestures[i].func(&(gestures[i].arg));
+	}
 }
 
 Atom

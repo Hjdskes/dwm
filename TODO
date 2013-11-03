@@ -4,6 +4,7 @@
 - consider onscreenkeyboard hooks for tablet deployment
 
 **ToDo:**
+* Fix gestures so we can use them directly, without having to press the statusbar or a use a keycombo
 * Implement Cairo w/ Pango?
 * Resize tiled clients by dragging window borders?
 * Try adapt the way multimonitor is treated: make it like GNOME Shell - basically make the extra monitor one single tag on its own.

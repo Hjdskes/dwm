@@ -22,7 +22,6 @@ static const char urgbgcolor[]           = "#2D2D2D";
 static const char urgfgcolor[]           = "#DC322F";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
-static const unsigned int systrayspacing = 6;
 static const float mfact                 = 0.63;
 static const char chatclient[]           = "jente_etnej - Skype™";
 static const char clock_fmt[]            = "%a %d %b, %R";
@@ -65,9 +64,7 @@ static const Rule rules[] = {
     { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
     { "Gimp",               NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "Cheese",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "VirtualBox",         NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Evince",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "libreoffice-writer", NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "libreoffice-startcenter", NULL,  NULL,               1 << 3,     False,      False,       -1 },
@@ -151,6 +148,7 @@ static Key keys[] = {
 	{ MONKEY,                   XK_Right,                   focusmon,       {.i = +1 } },
 	{ MONKEY|ShiftMask,         XK_Left,                    tagmon,         {.i = -1 } },
 	{ MONKEY|ShiftMask,         XK_Right,                   tagmon,         {.i = +1 } },
+	{ MODKEY,                   XK_g,                       gesture,        {0} },
 };
 
 /* button definitions */
@@ -176,14 +174,10 @@ static Button buttons[] = {
 	{ ClkClock,             0,              Button3,        gesture,        {0} },
 };
 
-/*may want to reuse the architecture present in buttons[] and keys[]*/
+/* gesture definitions */
+/* name can be u, d, l and r or combinations */
+/* function can be any function in dwm */
 static Gesture gestures[] = {
-	{ "dl", spawn, {.v = dmenu } },
-	{ "dr", spawn, {.v = dmenu } },
-	{ "l",  spawn, {.v = dmenu } },
-	{ "ld", spawn, {.v = dmenu } },
-	{ "lr", spawn, {.v = dmenu } },
-	{ "r",  spawn, {.v = dmenu } },
-	{ "rl", spawn, {.v = dmenu } },
-	{ "du", spawn, {.v = dmenu } },
+	{ "l",  cycle, {.i = -1 } },
+	{ "r",  cycle, {.i = +1 } },
 };
