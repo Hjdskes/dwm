@@ -49,7 +49,6 @@ static const Tag tags[] = {
 	{ "4 misc",  &layouts[3], -1,	-1 },
 };
 
-
 static const Rule rules[] = {
     /*WM_CLASS              WM_CLASS    WM_NAME
       class                 instance    title               tags mask   isfloating  attachaside  monitor */
@@ -148,8 +147,15 @@ static Key keys[] = {
 	{ MONKEY,                   XK_Right,                   focusmon,       {.i = +1 } },
 	{ MONKEY|ShiftMask,         XK_Left,                    tagmon,         {.i = -1 } },
 	{ MONKEY|ShiftMask,         XK_Right,                   tagmon,         {.i = +1 } },
-	{ MODKEY,                   XK_g,                       gesture,        {0} },
 };
+
+#ifndef Button6
+#define Button6 6
+#endif
+
+#ifndef Button7
+#define Button7 7
+#endif
 
 /* button definitions */
 /* click can be ClkLtSymbol, ClkStatusText, ClkClock, ClkClientWin, or ClkRootWin */
@@ -171,13 +177,6 @@ static Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
-	{ ClkClock,             0,              Button3,        gesture,        {0} },
-};
-
-/* gesture definitions */
-/* name can be u, d, l and r or combinations */
-/* function can be any function in dwm */
-static Gesture gestures[] = {
-	{ "l",  cycle, {.i = -1 } },
-	{ "r",  cycle, {.i = +1 } },
+	{ ClkRootWin,           0,              Button6,        cycle,          {.i = -1 } },
+	{ ClkRootWin,           0,              Button7,        cycle,          {.i = +1 } },
 };

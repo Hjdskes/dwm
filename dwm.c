@@ -83,12 +83,6 @@ typedef struct {
 	const Arg arg;
 } Button;
 
-typedef struct {
-	char *name;
-	void (*func)(const Arg *arg);
-	const Arg arg;
-} Gesture;
-
 typedef struct Monitor Monitor;
 typedef struct Client Client;
 struct Client {
@@ -191,7 +185,6 @@ static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
 static void focusstack(const Arg *arg);
-static void gesture(const Arg *arg);
 static Bool getrootptr(int *x, int *y);
 static long getstate(Window w);
 static Bool gettextprop(Window w, Atom atom, char *text, unsigned int size);
@@ -989,57 +982,6 @@ focusstack(const Arg *arg) {
 	if(c) {
 		focus(c);
 		restack(selmon);
-	}
-}
-
-void
-gesture(const Arg *arg) {
-	int x, y, dx, dy;
-	int gestpos = 0, count = 0;
-	char move, currgest[10];
-	XEvent ev;
-
-	if(XGrabPointer(dpy, root, False, MOUSEMASK, GrabModeAsync, GrabModeAsync,
-			None, cursor[CurMove]->cursor, CurrentTime) != GrabSuccess)
-		return;
-	if(!getrootptr(&x, &y))
-		return;
-	do {
-		XMaskEvent(dpy, MOUSEMASK|ExposureMask|SubstructureRedirectMask, &ev);
-		switch (ev.type) {
-			case ConfigureRequest:
-			case Expose:
-			case MapRequest:
-				handler[ev.type](&ev);
-				break;
-			case MotionNotify:
-				if(count++ < 10)
-					break;
-				count = 0;
-				dx = ev.xmotion.x - x;
-				dy = ev.xmotion.y - y;
-				x = ev.xmotion.x;
-				y = ev.xmotion.y;
-
-				if(abs(dx)/(abs(dy) + 1) == 0)
-					move = dy < 0 ? 'u' : 'd';
-				else
-					move = dx < 0 ? 'l' : 'r';
-
-				if(move != currgest[gestpos - 1]) {
-					if(gestpos > 9) {
-						ev.type++;
-						break;
-					}
-					currgest[gestpos] = move;
-					currgest[++gestpos] = '\0';
-				}
-		}
-	} while(ev.type != ButtonRelease);
-	XUngrabPointer(dpy, CurrentTime);
-	for(int i = 0; i < LENGTH(gestures); i++) {
-		if(strcmp(currgest, gestures[i].name) == 0)
-			gestures[i].func(&(gestures[i].arg));
 	}
 }
 
