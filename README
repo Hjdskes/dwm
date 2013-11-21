@@ -19,7 +19,7 @@ This repository holds my personal fork of dwm. Besides changing colors, commands
 -support for _NET_WM_STATE_DEMANDS_ATTENTION
 -pertag2
 -focus follow mouse tag
--attachaside per window rule, improved
+-attachaside per window rule, extended into pop()
 
 Requirements
 ------------
