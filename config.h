@@ -53,9 +53,9 @@ static const Rule rules[] = {
     /*WM_CLASS              WM_CLASS    WM_NAME
       class                 instance    title               tags mask   isfloating  attachaside  monitor */
     { "Firefox",            NULL,       NULL,               1,          False,      False,       -1 },
-    { "Skype",              NULL,       NULL,               1 << 1,     False,      False,       -1 },
-    { "Skype",              NULL,       "jente_etnej - Skype™", 1 << 1, False,      True,        -1 },
-    { "Skype",              NULL,       "Call with",        1 << 1,     True,       False,       -1 },
+    { "Skype",              NULL, "jente_etnej - Skype™",   1 << 1,     False,      True,        -1 },
+	{ "Skype",              NULL,   "Skype™ Chat",          1 << 1,     False,      False,       -1 },
+    { "Skype",              NULL,    "Call with",           1 << 1,     True,       False,       -1 },
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
     { "Gedit",              NULL,       NULL,               1 << 2,     False,      False,       -1 },
 	{ "Java",               NULL,       NULL,               1 << 2,     True,       False,       -1 },
@@ -149,14 +149,6 @@ static Key keys[] = {
 	{ MONKEY|ShiftMask,         XK_Right,                   tagmon,         {.i = +1 } },
 };
 
-#ifndef Button6
-#define Button6 6
-#endif
-
-#ifndef Button7
-#define Button7 7
-#endif
-
 /* button definitions */
 /* click can be ClkLtSymbol, ClkStatusText, ClkClock, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
@@ -177,6 +169,6 @@ static Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
-	{ ClkRootWin,           0,              Button6,        cycle,          {.i = -1 } },
-	{ ClkRootWin,           0,              Button7,        cycle,          {.i = +1 } },
+	{ ClkRootWin,           0,              6,              cycle,          {.i = -1 } },
+	{ ClkRootWin,           0,              7,              cycle,          {.i = +1 } },
 };
