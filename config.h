@@ -11,14 +11,14 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Cantarell 9";
+static const char font[]                 = "Sans Bold 8";
 static const char normbordercolor[]      = "#696969";
-static const char normbgcolor[]          = "#2D2D2D";
+static const char normbgcolor[]          = "#000000";
 static const char normfgcolor[]          = "#F9F9F9";
 static const char selbordercolor[]       = "#4A90D9";
-static const char selbgcolor[]           = "#2D2D2D";
+static const char selbgcolor[]           = "#000000";
 static const char selfgcolor[]           = "#4A90D9";
-static const char urgbgcolor[]           = "#2D2D2D";
+static const char urgbgcolor[]           = "#000000";
 static const char urgfgcolor[]           = "#DC322F";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
@@ -70,9 +70,10 @@ static const Rule rules[] = {
 };
 
 /* commands */
-static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", NULL };
 static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
+static const char *dmctl[]   = { "dmenu_netctl", NULL };
 static const char *term[]    = { "termite", NULL };
 static const char *browser[] = { "firefox", NULL };
 static const char *skype[]   = { "skype", NULL };
@@ -100,6 +101,7 @@ static Key keys[] = {
 	{ MODKEY,                   XK_Escape,                  spawn,          {.v = halt } },
 	{ MODKEY,                   XK_s,                       spawn,          {.v = find } },
 	{ MODKEY,                   XK_o,                       spawn,          {.v = dmfm } },
+	{ MODKEY,                   XK_n,                       spawn,          {.v = dmctl } },
 	{ MODKEY,                   XK_e,                       spawn,          {.v = term } },
 	{ MODKEY,                   XK_w,                       spawn,          {.v = browser } },
 	{ 0,                        XK_Print,                   spawn,          {.v = scrot } },
@@ -124,7 +126,6 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,         XK_bracketright,            setsmfact,      {.f = -0.05} },*/
 	{ MODKEY,                   XK_equal,                   incnmaster,     {.i = +1 } },
 	{ MODKEY,                   XK_minus,                   incnmaster,     {.i = -1 } },
-	{ MODKEY,                   XK_space,                   setlayout,      {0} },
 	{ MODKEY,                   XK_Up,                      pushup,         {0} },
 	{ MODKEY,                   XK_Down,                    pushdown,       {0} },
 	{ MODKEY,                   XK_Left,                    cycle,          {.i = -1 } },
