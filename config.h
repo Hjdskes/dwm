@@ -62,11 +62,9 @@ static const Rule rules[] = {
 	{ "Eclipse",            NULL,       NULL,               1 << 2,     False,      False,       -1 },
     { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
-    { "Gimp",               NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "Evince",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "libreoffice-writer", NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "libreoffice-startcenter", NULL,  NULL,               1 << 3,     False,      False,       -1 },
+    { "libreoffice",        NULL,       NULL,               1 << 3,     False,      False,       -1 },
 };
 
 /* commands */
@@ -77,7 +75,7 @@ static const char *dmctl[]   = { "dmenu_netctl", NULL };
 static const char *term[]    = { "termite", NULL };
 static const char *browser[] = { "firefox", NULL };
 static const char *skype[]   = { "skype", NULL };
-static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y.png", NULL };
+static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y-%R.png", NULL };
 static const char *xkill[]   = { "xkill", NULL };
 static const char *lock[]    = { "slock", NULL };
 static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
@@ -157,7 +155,6 @@ static Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkClock,             0,              Button2,        killclient,     {0} },
-	{ ClkStatusText,        0,              Button2,        spawn,          {.v = skype } },
 	{ ClkStatusText,        0,              Button3,        spawn,          {.v = volmute } },
 	{ ClkStatusText,        0,              Button4,        spawn,          {.v = volup } },
 	{ ClkStatusText,        0,              Button5,        spawn,          {.v = voldown } },
@@ -170,6 +167,4 @@ static Button buttons[] = {
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
-	{ ClkRootWin,           0,              6,              cycle,          {.i = -1 } },
-	{ ClkRootWin,           0,              7,              cycle,          {.i = +1 } },
 };
