@@ -88,6 +88,7 @@ typedef struct Client Client;
 struct Client {
 	char name[256];
 	float mina, maxa;
+	float cfact;
 	int x, y, w, h;
 	int oldx, oldy, oldw, oldh;
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
@@ -219,6 +220,7 @@ static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, Bool fullscreen);
 static void setlayout(const Arg *arg);
+static void setcfact(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
 static int shifttag(int dist);
@@ -443,9 +445,16 @@ attachstack(Client *c) {
 void
 bstack(Monitor *m) {
 	unsigned int i, n, w, mh, mx, tx;
+	float mfacts = 0, sfacts = 0;
 	Client *c;
 
-	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
+		if(n < m->nmasters[m->curtag])
+			mfacts += c->cfact;
+		else
+			sfacts += c->cfact;
+	}
+
 	if(n == 0)
 		return;
 
@@ -455,14 +464,16 @@ bstack(Monitor *m) {
 		mh = m->wh;
 	for(i = mx = tx = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if(i < m->nmasters[m->curtag]) {
-			w = (m->ww - mx) / (MIN(n, m->nmasters[m->curtag]) - i);
+			w = (m->ww - mx) * (c->cfact / mfacts) + 0.5;
 			resize(c, m->wx + mx, m->wy, w - (2*c->bw), mh - (2*c->bw), False);
 			mx += WIDTH(c);
+			mfacts -= c->cfact;
 		}
 		else {
-			w = (m->ww - tx) / (n - i);
+			w = (m->ww - tx) * (c->cfact / sfacts) + 0.5;
 			resize(c, m->wx + tx, m->wy + mh, w - (2*c->bw), m->wh - mh - (2*c->bw), False);
 			tx += WIDTH(c);
+			sfacts -= c->cfact;
 		}
 }
 
@@ -519,6 +530,7 @@ chat(Monitor *m) {
 	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++)
 		if(strstr(c->name, chatclient))
 			bl = c;
+
 	if(n == 0)
 		return;
 
@@ -1166,6 +1178,7 @@ manage(Window w, XWindowAttributes *wa) {
 	c->w = c->oldw = wa->width;
 	c->h = c->oldh = wa->height;
 	c->oldbw = wa->border_width;
+	c->cfact = 1.0;
 
 	if(c->x + WIDTH(c) > c->mon->mx + c->mon->mw)
 		c->x = c->mon->mx + c->mon->mw - WIDTH(c);
@@ -1656,6 +1669,26 @@ setlayout(const Arg *arg) {
 		drawbar(selmon);
 }
 
+void
+setcfact(const Arg *arg) {
+	float f;
+	Client *c;
+
+	c = selmon->sel;
+
+	if(!arg || !c || !selmon->lt[selmon->sellt]->arrange)
+		return;
+	if(arg->f == 0.0)
+		f = 1.0;
+	else {
+		f = arg->f + c->cfact;
+		if(f < 0.25 || f > 4.0)
+			return;
+	}
+	c->cfact = f;
+	arrange(selmon);
+}
+
 /* arg > 1.0 will set mfact absolutly */
 void
 setmfact(const Arg *arg) {
@@ -1804,9 +1837,16 @@ tagmon(const Arg *arg) {
 void
 tile(Monitor *m) {
 	unsigned int i, n, h, mw, my, ty;
+	float mfacts = 0, sfacts = 0;
 	Client *c;
 
-	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
+		if(n < m->nmasters[m->curtag])
+			mfacts += c->cfact;
+		else
+			sfacts += c->cfact;
+	}
+
 	if(n == 0)
 		return;
 
@@ -1816,14 +1856,16 @@ tile(Monitor *m) {
 		mw = m->ww;
 	for(i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if(i < m->nmasters[m->curtag]) {
-			h = (m->wh - my) / (MIN(n, m->nmasters[m->curtag]) - i);
+			h = (m->wh - my) * (c->cfact / mfacts) + 0.5;
 			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), False);
 			my += HEIGHT(c);
+			mfacts -= c->cfact;
 		}
 		else {
-			h = (m->wh - ty) / (n - i);
+			h = (m->wh - ty) * (c->cfact / sfacts) + 0.5;
 			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), False);
 			ty += HEIGHT(c);
+			sfacts -= c->cfact;
 		}
 }
 

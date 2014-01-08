@@ -11,15 +11,15 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Sans Bold 8";
-static const char normbordercolor[]      = "#696969";
-static const char normbgcolor[]          = "#000000";
-static const char normfgcolor[]          = "#F9F9F9";
-static const char selbordercolor[]       = "#4A90D9";
-static const char selbgcolor[]           = "#000000";
-static const char selfgcolor[]           = "#4A90D9";
-static const char urgbgcolor[]           = "#000000";
-static const char urgfgcolor[]           = "#DC322F";
+static const char font[]                 = "termsyn 11";
+static const char normbordercolor[]      = "#666666";
+static const char normbgcolor[]          = "#151515";
+static const char normfgcolor[]          = "#CDAA7D";
+static const char selbordercolor[]       = "#8B0000";
+static const char selbgcolor[]           = "#151515";
+static const char selfgcolor[]           = "#8B0000";
+static const char urgbgcolor[]           = "#151515";
+static const char urgfgcolor[]           = "#E16A98";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
@@ -74,7 +74,6 @@ static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *dmctl[]   = { "dmenu_netctl", NULL };
 static const char *term[]    = { "termite", NULL };
 static const char *browser[] = { "firefox", NULL };
-static const char *skype[]   = { "skype", NULL };
 static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y-%R.png", NULL };
 static const char *xkill[]   = { "xkill", NULL };
 static const char *lock[]    = { "slock", NULL };
@@ -120,8 +119,9 @@ static Key keys[] = {
 	{ MODKEY,                   XK_q,                       killclient,     {0} },
 	{ MODKEY,                   XK_bracketleft,             setmfact,       {.f = -0.05} },
 	{ MODKEY,                   XK_bracketright,            setmfact,       {.f = +0.05} },
-	/*{ MODKEY|ShiftMask,         XK_bracketleft,             setsmfact,      {.f = +0.05} },
-	{ MODKEY|ShiftMask,         XK_bracketright,            setsmfact,      {.f = -0.05} },*/
+	{ MODKEY|ShiftMask,         XK_bracketleft,             setcfact,       {.f = -0.05} },
+	{ MODKEY|ShiftMask,         XK_bracketright,            setcfact,       {.f = +0.05} },
+	{ MODKEY|ShiftMask,         XK_0,                       setcfact,       {.f = 0.0} },
 	{ MODKEY,                   XK_equal,                   incnmaster,     {.i = +1 } },
 	{ MODKEY,                   XK_minus,                   incnmaster,     {.i = -1 } },
 	{ MODKEY,                   XK_Up,                      pushup,         {0} },
