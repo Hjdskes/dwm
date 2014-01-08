@@ -1,9 +1,7 @@
 /* See LICENSE file for copyright and license details. */
-#include <X11/Xft/Xft.h>
-#include <pango/pangoxft.h>
 
 typedef struct {
-	XftColor rgb;
+	unsigned long rgb;
 } Clr;
 
 typedef struct {
@@ -14,9 +12,8 @@ typedef struct {
 	int ascent;
 	int descent;
 	unsigned int h;
-	PangoLayout *plo;
-	PangoContext *pgc;
-	PangoFontDescription *pfd;
+	XFontSet set;
+	XFontStruct *xfont;
 } Fnt;
 
 typedef struct {
@@ -65,6 +62,7 @@ void drw_setfont(Drw *drw, Fnt *font);
 void drw_setscheme(Drw *drw, ClrScheme *scheme);
 
 /* Drawing functions */
+void drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert);
 void drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert);
 
 /* Map functions */
