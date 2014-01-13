@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
+#include <X11/Xft/Xft.h>
+#include <pango/pango.h>
+#include <pango/pangoxft.h>
 
 #include "drw.h"
 #include "util.h"
@@ -42,39 +45,30 @@ drw_free(Drw *drw) {
 }
 
 Fnt *
-drw_font_create(Display *dpy, const char *fontname) {
+drw_font_create(Display *dpy, int screen, const char *fontname) {
 	Fnt *font;
-	char *def, **missing;
-	int n;
+	PangoFontMap *fontmap;
+	PangoContext *context;
+	PangoFontDescription *desc;
+	PangoFontMetrics *metrics;
 
 	font = (Fnt *)calloc(1, sizeof(Fnt));
 	if(!font)
 		return NULL;
-	font->set = XCreateFontSet(dpy, fontname, &missing, &n, &def);
-	if(missing) {
-		while(n--)
-			fprintf(stderr, "drw: missing fontset: %s\n", missing[n]);
-		XFreeStringList(missing);
-	}
-	if(font->set) {
-		XFontStruct **xfonts;
-		char **font_names;
-		XExtentsOfFontSet(font->set);
-		n = XFontsOfFontSet(font->set, &xfonts, &font_names);
-		while(n--) {
-			font->ascent = MAX(font->ascent, (*xfonts)->ascent);
-			font->descent = MAX(font->descent,(*xfonts)->descent);
-			xfonts++;
-		}
-	}
-	else {
-		if(!(font->xfont = XLoadQueryFont(dpy, fontname))
-		&& !(font->xfont = XLoadQueryFont(dpy, "fixed")))
-			die("error, cannot load font: '%s'\n", fontname);
-		font->ascent = font->xfont->ascent;
-		font->descent = font->xfont->descent;
-	}
+
+	fontmap = pango_xft_get_font_map(dpy, screen);
+	context = pango_font_map_create_context(fontmap);
+	desc = pango_font_description_from_string(fontname);
+	font->layout = pango_layout_new(context);
+	pango_layout_set_font_description(font->layout, desc);
+
+	metrics = pango_context_get_metrics(context, desc, NULL);
+	font->ascent = pango_font_metrics_get_ascent(metrics) / PANGO_SCALE;
+	font->descent = pango_font_metrics_get_descent(metrics) / PANGO_SCALE;
 	font->h = font->ascent + font->descent;
+
+	pango_font_metrics_unref(metrics);
+	g_object_unref(context);
 	return font;
 }
 
@@ -82,10 +76,7 @@ void
 drw_font_free(Display *dpy, Fnt *font) {
 	if(!font)
 		return;
-	if(font->set)
-		XFreeFontSet(dpy, font->set);
-	else
-		XFreeFont(dpy, font->xfont);
+	g_object_unref(font->layout);
 	free(font);
 }
 
@@ -93,7 +84,8 @@ Clr *
 drw_clr_create(Drw *drw, const char *clrname) {
 	Clr *clr;
 	Colormap cmap;
-	XColor color;
+	Visual *vis;
+	XftColor color;
 
 	if(!drw)
 		return NULL;
@@ -101,9 +93,10 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	if(!clr)
 		return NULL;
 	cmap = DefaultColormap(drw->dpy, drw->screen);
-	if(!XAllocNamedColor(drw->dpy, cmap, clrname, &color, &color))
+	vis = DefaultVisual(drw->dpy, drw->screen);
+	if(!XftColorAllocName(drw->dpy, vis, cmap, clrname, &color))
 		die("error, cannot allocate color '%s'\n", clrname);
-	clr->rgb = color.pixel;
+	clr->rgb = color;
 	return clr;
 }
 
@@ -129,18 +122,19 @@ void
 drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;
+	XftDraw *d;
 	Extnts tex;
 
 	if(!drw || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->fg->rgb : drw->scheme->bg->rgb);
+	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->fg->rgb.pixel : drw->scheme->bg->rgb.pixel);
 	XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
 	if(!text || !drw->font)
 		return;
 	olen = strlen(text);
 	drw_font_getexts(drw->font, text, olen, &tex);
 	th = drw->font->ascent + drw->font->descent;
-	ty = y + (h / 2) - (th / 2) + drw->font->ascent;
+	ty = y + (h / 2) - (th / 2);
 	tx = x + (h / 2);
 	/* shorten text if necessary */
 	for(len = MIN(olen, sizeof buf); len && (tex.w > w - tex.h || w < tex.h); len--)
@@ -150,11 +144,10 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	memcpy(buf, text, len);
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb : drw->scheme->fg->rgb);
-	if(drw->font->set)
-		XmbDrawString(drw->dpy, drw->drawable, drw->font->set, drw->gc, tx, ty, buf, len);
-	else
-		XDrawString(drw->dpy, drw->drawable, drw->gc, tx, ty, buf, len);
+	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb.pixel : drw->scheme->fg->rgb.pixel);
+	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
+	pango_layout_set_text(drw->font->layout, buf, len);
+	pango_xft_render_layout(d, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->layout, tx * PANGO_SCALE, ty * PANGO_SCALE);
 }
 
 void
@@ -168,19 +161,14 @@ drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 
 void
 drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *tex) {
-	XRectangle r;
+	PangoRectangle r;
 
 	if(!font || !text)
 		return;
-	if(font->set) {
-		XmbTextExtents(font->set, text, len, NULL, &r);
-		tex->w = r.width;
-		tex->h = r.height;
-	}
-	else {
-		tex->h = font->ascent + font->descent;
-		tex->w = XTextWidth(font->xfont, text, len);
-	}
+	pango_layout_set_text(font->layout, text, len);
+	pango_layout_get_extents(font->layout, 0, &r);
+	tex->h = r.height / PANGO_SCALE;
+	tex->w = r.width / PANGO_SCALE;
 }
 
 unsigned int

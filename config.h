@@ -11,7 +11,7 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "termsyn 11";
+static const char font[]                 = "Sans 8";
 static const char normbordercolor[]      = "#666666";
 static const char normbgcolor[]          = "#151515";
 static const char normfgcolor[]          = "#CDAA7D";
