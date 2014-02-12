@@ -11,20 +11,20 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Sans 8";
+static const char font[]                 = "Sans Bold, Icons 9";
 static const char normbordercolor[]      = "#666666";
-static const char normbgcolor[]          = "#151515";
-static const char normfgcolor[]          = "#CDAA7D";
+static const char normbgcolor[]          = "#1D1F21";
+static const char normfgcolor[]          = "#C5C8C6";
 static const char selbordercolor[]       = "#8B0000";
-static const char selbgcolor[]           = "#151515";
-static const char selfgcolor[]           = "#8B0000";
-static const char urgbgcolor[]           = "#151515";
-static const char urgfgcolor[]           = "#E16A98";
+static const char selbgcolor[]           = "#1D1F21";
+static const char selfgcolor[]           = "#81A2BE";
+static const char urgbgcolor[]           = "#1D1F21";
+static const char urgfgcolor[]           = "#A54242";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
 static const char chatclient[]           = "jente_etnej - Skype™";
-static const char clock_fmt[]            = "%a %d %b, %R";
+static const char clock_fmt[]            = "\uF3C8 %a %d %b, %R";
 static const int nmaster                 = 1;
 static const Bool showbar                = True;
 static const Bool topbar                 = True;
@@ -33,20 +33,20 @@ static const Bool resizehints            = False;
 /* layouts */
 static const Layout layouts[] = {
   /* symbol arrange */
-	{ "T",  tile },
-	{ "C",  chat },
-	{ "B",  bstack },
-	{ "M",  monocle },
-	{ "F",  NULL },
+	{ "",  tile },
+	{ "",  chat },
+	{ "",  bstack },
+	{ "",  monocle },
+	{ "",  NULL },
 };
 
 /* tagging */
 static const Tag tags[] = {
 	/* name	     layout       mfact	nmaster */
-	{ "1 web",   &layouts[0], -1,	-1 },
-	{ "2 chill", &layouts[1], 0.80, -1 },
-	{ "3 term",  &layouts[0], -1,	-1 },
-	{ "4 misc",  &layouts[3], -1,	-1 },
+	{ "\uF3DF web",   &layouts[0], -1,	-1 },
+	{ "\uF21A chill", &layouts[1], 0.80, -1 },
+	{ "\uF333 term",  &layouts[0], -1,	-1 },
+	{ "\uF22E files",  &layouts[3], -1,	-1 },
 };
 
 static const Rule rules[] = {
@@ -63,7 +63,7 @@ static const Rule rules[] = {
     { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
     { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "Evince",             NULL,       NULL,               1 << 3,     False,      False,       -1 },
+    { "Zathura",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
     { "libreoffice",        NULL,       NULL,               1 << 3,     False,      False,       -1 },
 };
 
@@ -152,8 +152,6 @@ static Key keys[] = {
 /* click can be ClkLtSymbol, ClkStatusText, ClkClock, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
-	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkClock,             0,              Button2,        killclient,     {0} },
 	{ ClkStatusText,        0,              Button3,        spawn,          {.v = volmute } },
 	{ ClkStatusText,        0,              Button4,        spawn,          {.v = volup } },

@@ -4,6 +4,7 @@
 - consider onscreenkeyboard hooks for tablet deployment
 
 **ToDo:**
+* XftDraw to global? w/ XftDrawChange? 
 * Use button6 and 7 everywhere
 * Fix attachaside not being able to move to master
 * Implement Cairo w/ Pango?

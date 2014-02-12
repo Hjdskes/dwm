@@ -481,7 +481,7 @@ bstack(Monitor *m) {
 
 void
 buttonpress(XEvent *e) {
-	unsigned int i, x, click, occ = 0;
+	unsigned int i, x, click;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -495,14 +495,10 @@ buttonpress(XEvent *e) {
 		focus(NULL);
 	}
 	if(ev->window == selmon->barwin) {
-		for(c = m->clients; c; c = c->next)
-			occ |= c->tags;
 		i = x = 0;
-		do {
-			if(!(m->tagset[m->seltags] & 1 << i) && !(occ & 1 << i))
-				continue;
+		do
 			x += TEXTW(tags[i].name);
-		} while(ev->x >= x && ++i < LENGTH(tags));
+		while(ev->x >= x && ++i < LENGTH(tags));
 		if(i < LENGTH(tags)) {
 			click = ClkTagBar;
 			arg.ui = 1 << i;
@@ -850,20 +846,17 @@ dirtomon(int dir) {
 void
 drawbar(Monitor *m) {
 	int x, xx, w;
-	unsigned int i, occ = 0, urg = 0;
+	unsigned int i, urg = 0;
 	time_t current;
 	char clock[38];
 	Client *c;
 
 	for(c = m->clients; c; c = c->next) {
-		occ |= c->tags;
 		if(c->isurgent)
 			urg |= c->tags;
 	}
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
-		if(!(m->tagset[m->seltags] & 1 << i) && !(occ & 1 << i))
-			continue;
 		w = TEXTW(tags[i].name);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i].name, 0);

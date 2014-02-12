@@ -148,6 +148,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
 	pango_layout_set_text(drw->font->layout, buf, len);
 	pango_xft_render_layout(d, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->layout, tx * PANGO_SCALE, ty * PANGO_SCALE);
+	XftDrawDestroy(d);
 }
 
 void
