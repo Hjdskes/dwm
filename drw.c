@@ -119,6 +119,20 @@ drw_setscheme(Drw *drw, ClrScheme *scheme) {
 }
 
 void
+drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert) {
+	int dx;
+
+	if(!drw || !drw->font || !drw->scheme)
+		return;
+	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb.pixel : drw->scheme->fg->rgb.pixel);
+	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
+	if(filled)
+		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx+1, dx+1);
+	else if(empty)
+		XDrawRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx, dx);
+}
+
+void
 drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;

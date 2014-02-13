@@ -846,12 +846,13 @@ dirtomon(int dir) {
 void
 drawbar(Monitor *m) {
 	int x, xx, w;
-	unsigned int i, urg = 0;
+	unsigned int i, occ = 0, urg = 0;
 	time_t current;
 	char clock[38];
 	Client *c;
 
 	for(c = m->clients; c; c = c->next) {
+		occ |= c->tags;
 		if(c->isurgent)
 			urg |= c->tags;
 	}
@@ -860,6 +861,8 @@ drawbar(Monitor *m) {
 		w = TEXTW(tags[i].name);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i].name, 0);
+		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+				occ & 1 << i, urg & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
