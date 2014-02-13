@@ -62,7 +62,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeUrg, SchemeLast }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeOcc, SchemeUrg, SchemeLast }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMFullscreen,
        NetWMDemandsAttention, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -605,6 +605,8 @@ cleanup(void) {
 	drw_clr_free(scheme[SchemeSel].border);
 	drw_clr_free(scheme[SchemeSel].bg);
 	drw_clr_free(scheme[SchemeSel].fg);
+	drw_clr_free(scheme[SchemeOcc].fg);
+	drw_clr_free(scheme[SchemeOcc].bg);
 	drw_clr_free(scheme[SchemeUrg].bg);
 	drw_clr_free(scheme[SchemeUrg].fg);
 	drw_free(drw);
@@ -846,19 +848,20 @@ dirtomon(int dir) {
 void
 drawbar(Monitor *m) {
 	int x, xx, w;
-	unsigned int i, urg = 0;
+	unsigned int i, urg = 0, occ = 0;
 	time_t current;
 	char clock[38];
 	Client *c;
 
 	for(c = m->clients; c; c = c->next) {
+		occ |= c->tags;
 		if(c->isurgent)
 			urg |= c->tags;
 	}
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i].name);
-		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
+		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : occ & 1 << i ? &scheme[SchemeOcc] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i].name, 0);
 		x += w;
 	}
@@ -1740,6 +1743,8 @@ setup(void) {
 	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor);
 	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
 	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
+	scheme[SchemeOcc].bg = drw_clr_create(drw, occbgcolor);
+	scheme[SchemeOcc].fg = drw_clr_create(drw, occfgcolor);
 	scheme[SchemeUrg].bg = drw_clr_create(drw, urgbgcolor);
 	scheme[SchemeUrg].fg = drw_clr_create(drw, urgfgcolor);
 	/* init bars */
