@@ -11,7 +11,7 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Sans Bold, Icons 9";
+static const char font[]                 = "Sans 9";
 static const char normbordercolor[]      = "#666666";
 static const char normbgcolor[]          = "#1D1F21";
 static const char normfgcolor[]          = "#C5C8C6";
@@ -24,7 +24,7 @@ static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
 static const char chatclient[]           = "jente_etnej - Skype™";
-static const char clock_fmt[]            = "\uF3C8 %a %d %b, %R";
+static const char clock_fmt[]            = "%a %d %b, %R";
 static const int nmaster                 = 1;
 static const Bool showbar                = True;
 static const Bool topbar                 = True;
@@ -33,20 +33,20 @@ static const Bool resizehints            = False;
 /* layouts */
 static const Layout layouts[] = {
   /* symbol arrange */
-	{ "",  tile },
-	{ "",  chat },
-	{ "",  bstack },
-	{ "",  monocle },
-	{ "",  NULL },
+	{ "T",  tile },
+	{ "C",  chat },
+	{ "B",  bstack },
+	{ "M",  monocle },
+	{ "F",  NULL },
 };
 
 /* tagging */
 static const Tag tags[] = {
 	/* name	     layout       mfact	nmaster */
-	{ "\uF3DF web",   &layouts[0], -1,	-1 },
-	{ "\uF21A chill", &layouts[1], 0.80, -1 },
-	{ "\uF333 term",  &layouts[0], -1,	-1 },
-	{ "\uF22E files",  &layouts[3], -1,	-1 },
+	{ "web",   &layouts[0], -1,	-1 },
+	{ "chill", &layouts[1], 0.80, -1 },
+	{ "term",  &layouts[0], -1,	-1 },
+	{ "files",  &layouts[3], -1,	-1 },
 };
 
 static const Rule rules[] = {

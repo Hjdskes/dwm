@@ -21,6 +21,7 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	drw->w = w;
 	drw->h = h;
 	drw->drawable = XCreatePixmap(dpy, root, w, h, DefaultDepth(dpy, screen));
+	drw->xftdrawable = XftDrawCreate(dpy, drw->drawable, DefaultVisual(dpy, screen), DefaultColormap(dpy, screen));
 	drw->gc = XCreateGC(dpy, root, 0, NULL);
 	XSetLineAttributes(dpy, drw->gc, 1, LineSolid, CapButt, JoinMiter);
 	return drw;
@@ -40,6 +41,7 @@ drw_resize(Drw *drw, unsigned int w, unsigned int h) {
 void
 drw_free(Drw *drw) {
 	XFreePixmap(drw->dpy, drw->drawable);
+	XftDrawDestroy(drw->xftdrawable);
 	XFreeGC(drw->dpy, drw->gc);
 	free(drw);
 }
@@ -119,12 +121,12 @@ drw_setscheme(Drw *drw, ClrScheme *scheme) {
 }
 
 void
-drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert) {
+drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty) {
 	int dx;
 
 	if(!drw || !drw->font || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb.pixel : drw->scheme->fg->rgb.pixel);
+	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb.pixel);
 	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
 	if(filled)
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx+1, dx+1);
@@ -136,7 +138,6 @@ void
 drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;
-	XftDraw *d;
 	Extnts tex;
 
 	if(!drw || !drw->scheme)
@@ -159,10 +160,8 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb.pixel : drw->scheme->fg->rgb.pixel);
-	d = XftDrawCreate(drw->dpy, drw->drawable, DefaultVisual(drw->dpy, drw->screen), DefaultColormap(drw->dpy, drw->screen));
 	pango_layout_set_text(drw->font->layout, buf, len);
-	pango_xft_render_layout(d, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->layout, tx * PANGO_SCALE, ty * PANGO_SCALE);
-	XftDrawDestroy(d);
+	pango_xft_render_layout(drw->xftdrawable, invert ? &drw->scheme->bg->rgb : &drw->scheme->fg->rgb, drw->font->layout, tx * PANGO_SCALE, ty * PANGO_SCALE);
 }
 
 void
