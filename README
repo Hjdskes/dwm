@@ -3,7 +3,6 @@ dwm - dynamic window manager
 dwm is an extremely fast, small, and dynamic window manager for X.
 
 This repository holds my personal fork of dwm. Besides changing colors, commands and rules, I have applied these patches:
--cycle tags
 -draw status on all monitors, update correctly
 -remove dmenumon
 -pango
@@ -11,15 +10,12 @@ This repository holds my personal fork of dwm. Besides changing colors, commands
 -urgent color
 -center clock
 -push
--chat layout
--hide empty tags
 -dont place dwm-VERSION in the statusbar
 -removed square brackets around monocle indicator
 -xkeycodetokeysymfix
 -support for _NET_WM_STATE_DEMANDS_ATTENTION
--pertag2
--focus follow mouse tag
--attachaside per window rule, extended into pop()
+-attachaside per window rule
+-emptyview
 
 Requirements
 ------------

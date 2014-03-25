@@ -4,67 +4,65 @@
 #define MODKEY Mod1Mask
 #define MONKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
-	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-	{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
-	{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+	{ MODKEY,                       KEY,      toggleview,     {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask,           KEY,      view,           {.ui = 1 << TAG} }, \
+	{ MODKEY|ShiftMask,             KEY,      toggletag,      {.ui = 1 << TAG} }, \
+	{ MODKEY|ControlMask|ShiftMask, KEY,      tag,            {.ui = 1 << TAG} },
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Sans 9";
-static const char normbordercolor[]      = "#666666";
+static const char font[]                 = "Sans 8";
+static const char normbordercolor[]      = "#707070";
 static const char normbgcolor[]          = "#1D1F21";
-static const char normfgcolor[]          = "#C5C8C6";
-static const char selbordercolor[]       = "#8B0000";
+static const char normfgcolor[]          = "#707070";
+static const char selbordercolor[]       = "#F9F9F9";
 static const char selbgcolor[]           = "#1D1F21";
-static const char selfgcolor[]           = "#81A2BE";
+static const char selfgcolor[]           = "#F9F9F9";
 static const char urgbgcolor[]           = "#1D1F21";
 static const char urgfgcolor[]           = "#A54242";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
-static const char chatclient[]           = "jente_etnej - Skype™";
 static const char clock_fmt[]            = "%a %d %b, %R";
 static const int nmaster                 = 1;
 static const Bool showbar                = True;
-static const Bool topbar                 = True;
+static const Bool topbar                 = False;
 static const Bool resizehints            = False;
 
-/* layouts */
-static const Layout layouts[] = {
-  /* symbol arrange */
-	{ "T",  tile },
-	{ "C",  chat },
-	{ "B",  bstack },
-	{ "M",  monocle },
-	{ "F",  NULL },
-};
+static const char *tags[] = { "web", "skype", "term", "code", "media", "doc", "n/a" };
 
-/* tagging */
-static const Tag tags[] = {
-	/* name	     layout       mfact	nmaster */
-	{ "web",   &layouts[0], -1,	-1 },
-	{ "chill", &layouts[1], 0.80, -1 },
-	{ "term",  &layouts[0], -1,	-1 },
-	{ "files",  &layouts[3], -1,	-1 },
+static const Layout layouts[] = {
+	/* symbol   arrange */
+	{ "T",      tile },
+	{ "B",      bstack },
+	{ "M",      monocle },
+	{ "F",      NULL },
 };
 
 static const Rule rules[] = {
     /*WM_CLASS              WM_CLASS    WM_NAME
       class                 instance    title               tags mask   isfloating  attachaside  monitor */
-    { "Firefox",            NULL,       NULL,               1,          False,      False,       -1 },
-    { "Skype",              NULL, "jente_etnej - Skype™",   1 << 1,     False,      True,        -1 },
+	//one
+	{ "Firefox",            NULL,       NULL,               1,          False,      False,       -1 },
+	//two
+	{ "Skype",              NULL, "jente_etnej - Skype™",   1 << 1,     False,      True,        -1 },
 	{ "Skype",              NULL,   "Skype™ Chat",          1 << 1,     False,      False,       -1 },
-    { "Skype",              NULL,    "Call with",           1 << 1,     True,       False,       -1 },
+	//{ "Skype",              NULL,    "Call with",           1 << 1,     True,       False,       -1 },
+	//three
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
-    { "Gedit",              NULL,       NULL,               1 << 2,     False,      False,       -1 },
-	{ "Java",               NULL,       NULL,               1 << 2,     True,       False,       -1 },
-	{ "Eclipse",            NULL,       NULL,               1 << 2,     False,      False,       -1 },
-    { "Audacious",          NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "MPlayer",            NULL,       NULL,               1 << 3,     True,       False,       -1 },
-    { "Transmission-gtk",   NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "Zathura",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
-    { "libreoffice",        NULL,       NULL,               1 << 3,     False,      False,       -1 },
+	//four
+	{ "Gedit",              NULL,       NULL,               1 << 3,     False,      False,       -1 },
+	{ "Eclipse",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
+	{ "Java",               NULL,       NULL,               1 << 3,     True,       False,       -1 },
+    //five
+    { "Audacious",          NULL,       NULL,               1 << 4,     False,      False,       -1 },
+    { "MPlayer",            NULL,       NULL,               1 << 4,     True,       False,       -1 },
+    { "Transmission-gtk",   NULL,       NULL,               1 << 4,     False,      False,       -1 },
+    //six
+    { "Evince",             NULL,       NULL,               1 << 5,     False,      False,       -1 },
+    { "libreoffice",        NULL,       NULL,               1 << 5,     False,      False,       -1 },
+    //seven
+	{ NULL, "nl-tudelft-bw4t-server-BW4TEnvironment", NULL, 1 << 6, True, True, 0 },
 };
 
 /* commands */
@@ -73,8 +71,7 @@ static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *dmctl[]   = { "dmenu_netctl", NULL };
 static const char *term[]    = { "termite", NULL };
-static const char *browser[] = { "firefox", NULL };
-static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y-%R.png", NULL };
+static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y-%R.pngxs", NULL };
 static const char *xkill[]   = { "xkill", NULL };
 static const char *lock[]    = { "slock", NULL };
 static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
@@ -93,14 +90,14 @@ static const char *stop[]    = { "audtool", "playback-stop", NULL };
 static Key keys[] = {
 	/* modifier                 key                         function        argument */
 	{ MODKEY,                   XK_r,                       spawn,          {.v = dmenu } },
-	{ MODKEY,                   XK_x,                       spawn,          {.v = xkill } },
-	{ MODKEY,                   XK_l,                       spawn,          {.v = lock } },
 	{ MODKEY,                   XK_Escape,                  spawn,          {.v = halt } },
-	{ MODKEY,                   XK_s,                       spawn,          {.v = find } },
-	{ MODKEY,                   XK_o,                       spawn,          {.v = dmfm } },
-	{ MODKEY,                   XK_n,                       spawn,          {.v = dmctl } },
 	{ MODKEY,                   XK_e,                       spawn,          {.v = term } },
-	{ MODKEY,                   XK_w,                       spawn,          {.v = browser } },
+	{ MODKEY,                   XK_q,                       killclient,     {0} },
+	{ MODKEY|ShiftMask,         XK_x,                       spawn,          {.v = xkill } },
+	{ MODKEY|ShiftMask,         XK_l,                       spawn,          {.v = lock } },
+	{ MODKEY|ShiftMask,         XK_s,                       spawn,          {.v = find } },
+	{ MODKEY|ShiftMask,         XK_o,                       spawn,          {.v = dmfm } },
+	{ MODKEY|ShiftMask,         XK_n,                       spawn,          {.v = dmctl } },
 	{ 0,                        XK_Print,                   spawn,          {.v = scrot } },
 	{ 0,                        XF86XK_Display,             spawn,          {.v = soff } },
 	{ 0,                        XF86XK_AudioRaiseVolume,    spawn,          {.v = volup } },
@@ -112,11 +109,6 @@ static Key keys[] = {
 	{ 0,                        XF86XK_AudioStop,           spawn,          {.v = stop } },
 	{ MODKEY|ControlMask,       XK_b,                       togglebar,      {0} },
 	{ MODKEY|ControlMask,       XK_q,                       quit,           {0} },
-	{ MODKEY,                   XK_Tab,                     focusstack,     {.i = +1 } },
-	{ MODKEY|ShiftMask,         XK_Tab,                     focusstack,     {.i = -1 } },
-	{ MODKEY,                   XK_Return,                  zoom,           {0} },
-	{ MODKEY,                   XK_dead_grave,              view,           {0} },
-	{ MODKEY,                   XK_q,                       killclient,     {0} },
 	{ MODKEY,                   XK_bracketleft,             setmfact,       {.f = -0.05} },
 	{ MODKEY,                   XK_bracketright,            setmfact,       {.f = +0.05} },
 	{ MODKEY|ShiftMask,         XK_bracketleft,             setcfact,       {.f = -0.05} },
@@ -124,28 +116,40 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,         XK_0,                       setcfact,       {.f = 0.0} },
 	{ MODKEY,                   XK_equal,                   incnmaster,     {.i = +1 } },
 	{ MODKEY,                   XK_minus,                   incnmaster,     {.i = -1 } },
-	{ MODKEY,                   XK_Up,                      pushup,         {0} },
-	{ MODKEY,                   XK_Down,                    pushdown,       {0} },
-	{ MODKEY,                   XK_Left,                    cycle,          {.i = -1 } },
-	{ MODKEY,                   XK_Right,                   cycle,          {.i = +1 } },
-	{ MODKEY|ShiftMask,         XK_Left,                    tagcycle,       {.i = -1 } },
-	{ MODKEY|ShiftMask,         XK_Right,                   tagcycle,       {.i = +1 } },
-	{ MODKEY|ShiftMask,         XK_f,                       togglefloating, {0} },
+	{ MODKEY,                   XK_Return,                  zoom,           {0} },
+	{ MODKEY,                   XK_Tab,                     view,           {0} },
+	{ MODKEY|ShiftMask,         XK_space,                   togglefloating, {0} },
 	{ MODKEY,                   XK_t,                       setlayout,      {.v = &layouts[0] } },
-	{ MODKEY,                   XK_c,                       setlayout,      {.v = &layouts[1] } },
-	{ MODKEY,                   XK_b,                       setlayout,      {.v = &layouts[2] } },
-	{ MODKEY,                   XK_m,                       setlayout,      {.v = &layouts[3] } },
-	{ MODKEY,                   XK_f,                       setlayout,      {.v = &layouts[4] } },
+	{ MODKEY,                   XK_b,                       setlayout,      {.v = &layouts[1] } },
+	{ MODKEY,                   XK_m,                       setlayout,      {.v = &layouts[2] } },
+	{ MODKEY,                   XK_f,                       setlayout,      {.v = &layouts[3] } },
 	TAGKEYS(                    XK_1,                       0)
 	TAGKEYS(                    XK_2,                       1)
 	TAGKEYS(                    XK_3,                       2)
 	TAGKEYS(                    XK_4,                       3)
-	{ MODKEY,                   XK_a,                       view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,         XK_a,                       tag,            {.ui = ~1 } },
+	TAGKEYS(                    XK_5,                       4)
+	TAGKEYS(                    XK_6,                       5)
+	TAGKEYS(                    XK_7,                       6)
+	{ MODKEY,                   XK_Up,                      focusstack,     {.i = +1 } },
+	{ MODKEY,                   XK_Down,                    focusstack,     {.i = -1 } },
+	{ MODKEY|ShiftMask,         XK_Up,                      pushup,         {0} },
+	{ MODKEY|ShiftMask,         XK_Down,                    pushdown,       {0} },
+
+	{ MODKEY,                   XK_dead_grave,              view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,         XK_dead_grave,              tag,            {.ui = ~0 } }, //1?
 	{ MONKEY,                   XK_Left,                    focusmon,       {.i = -1 } },
 	{ MONKEY,                   XK_Right,                   focusmon,       {.i = +1 } },
 	{ MONKEY|ShiftMask,         XK_Left,                    tagmon,         {.i = -1 } },
 	{ MONKEY|ShiftMask,         XK_Right,                   tagmon,         {.i = +1 } },
+
+	/*{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },*/
 };
 
 /* button definitions */
@@ -161,8 +165,8 @@ static Button buttons[] = {
 	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
-	{ ClkTagBar,            0,              Button1,        view,           {0} },
-	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
-	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
-	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+	{ ClkTagBar,            0,              Button1,        toggleview,     {0} },
+	{ ClkTagBar,            0,              Button3,        view,           {0} },
+	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} }, //change these?
+	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} }, //?
 };
