@@ -31,7 +31,7 @@ drw_resize(Drw *drw, unsigned int w, unsigned int h) {
 		return;
 	drw->w = w;
 	drw->h = h;
-	if(drw->surface) //FIXME: does this work?
+	if(drw->surface)
 		cairo_xlib_surface_set_size(drw->surface, w, h);
 }
 
