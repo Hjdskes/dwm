@@ -16,9 +16,7 @@ typedef struct {
 } Cur;
 
 typedef struct {
-	int ascent;
-	int descent;
-	unsigned int h;
+	int h;
 	PangoLayout *layout;
 } Fnt;
 

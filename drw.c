@@ -42,30 +42,21 @@ drw_free(Drw *drw) {
 	free(drw);
 }
 
-Fnt * //FIXME: check if this is optimal with cairo
+Fnt *
 drw_font_create(Drw *drw, const char *fontname) {
 	Fnt *font;
-	PangoContext *context;
 	PangoFontDescription *desc;
-	PangoFontMetrics *metrics;
 
 	font = (Fnt *)calloc(1, sizeof(Fnt));
 	if(!font)
 		return NULL;
 
-	context = pango_cairo_create_context(drw->context);
+	font->layout = pango_cairo_create_layout(drw->context);
 	desc = pango_font_description_from_string(fontname);
-	font->layout = pango_layout_new(context);
 	pango_layout_set_font_description(font->layout, desc);
-
-	metrics = pango_context_get_metrics(context, desc, NULL);
-	font->ascent = pango_font_metrics_get_ascent(metrics) / PANGO_SCALE;
-	font->descent = pango_font_metrics_get_descent(metrics) / PANGO_SCALE;
-	font->h = font->ascent + font->descent;
-
-	pango_font_metrics_unref(metrics);
 	pango_font_description_free(desc);
-	g_object_unref(context);
+
+	pango_layout_get_pixel_size(font->layout, NULL, &font->h);
 	return font;
 }
 
@@ -124,7 +115,7 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 	if(!drw || !drw->font || !drw->scheme)
 		return;
 	cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
-	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
+	dx = (drw->font->h + 2) / 4;
 	if(filled) {
 		cairo_rectangle(drw->context, x+1, y+1, dx+1, dx+1);
 		cairo_fill(drw->context);
@@ -150,7 +141,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		return;
 	olen = strlen(text);
 	drw_font_getexts(drw->font, text, olen, &tex);
-	th = drw->font->ascent + drw->font->descent;
+	th = drw->font->h;
 	ty = y + (h / 2) - (th / 2);
 	tx = x + (h / 2);
 	/* shorten text if necessary */
