@@ -21,6 +21,7 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	drw->h = h;
 	drw->surface = cairo_xlib_surface_create(dpy, root, DefaultVisual(dpy, screen), w, h);
 	drw->context = cairo_create(drw->surface);
+	cairo_set_line_width(drw->context, 1);
 	return drw;
 }
 
@@ -126,12 +127,10 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
 	cairo_move_to(drw->context, x+1.5, y+1.5);
 	if(filled) {
-		cairo_set_line_width(drw->context, 1);
 		cairo_rectangle(drw->context, x+1, y+1, dx+1, dx+1);
 		cairo_fill(drw->context);
 	}
 	else if(empty) {
-		cairo_set_line_width(drw->context, 1);
 		cairo_rel_line_to(drw->context, dx, 0);
 		cairo_rel_line_to(drw->context, 0, dx);
 		cairo_rel_line_to(drw->context, -dx, 0);
@@ -141,17 +140,14 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 }
 
 void //TODO clipping? save/restore?
-drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
+drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;
 	Extnts tex;
 
 	if(!drw || !drw->scheme)
 		return;
-	if(invert)
-		cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
-	else
-		cairo_set_source_rgb(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b);
+	cairo_set_source_rgb(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b);
 	cairo_rectangle(drw->context, x, y, w, h);
 	cairo_fill(drw->context);
 	if(!text || !drw->font)
@@ -171,10 +167,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 	pango_layout_set_text(drw->font->layout, buf, len);
 	cairo_move_to(drw->context, tx, ty);
-	if(invert)
-		cairo_set_source_rgb(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b);
-	else
-		cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
+	cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
 	pango_cairo_update_layout(drw->context, drw->font->layout);
 	pango_cairo_show_layout(drw->context, drw->font->layout);
 }

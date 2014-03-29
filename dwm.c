@@ -777,14 +777,14 @@ drawbar(Monitor *m) {
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, tags[i], 0);
+		drw_text(drw, x, 0, w, bh, tags[i]);
 		drw_rect(drw, x, 0, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
 				occ & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, &scheme[SchemeNorm]);
-	drw_text(drw, x, 0, w, bh, m->ltsymbol, 0);
+	drw_text(drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
 	xx = x;
 	w = TEXTW(stext);
@@ -793,16 +793,16 @@ drawbar(Monitor *m) {
 		x = xx;
 		w = m->ww - xx;
 	}
-	drw_text(drw, x, 0, w, bh, stext, 0);
+	drw_text(drw, x, 0, w, bh, stext);
 	if((w = x - xx) > bh) {
 		x = xx;
 		time(&current);
 		strftime(clock, 38, clock_fmt, localtime(&current));
 		drw_setscheme(drw, &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, NULL, 0);
+		drw_text(drw, x, 0, w, bh, NULL);
 		w = MIN(w, TEXTW(clock));
 		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
-		drw_text(drw, x, 0, w, bh, clock, 0);
+		drw_text(drw, x, 0, w, bh, clock);
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
