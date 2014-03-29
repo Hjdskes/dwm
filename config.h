@@ -2,7 +2,6 @@
 #include <X11/XF86keysym.h>
 
 #define MODKEY Mod1Mask
-#define MONKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      toggleview,     {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      view,           {.ui = 1 << TAG} }, \
@@ -45,9 +44,7 @@ static const Rule rules[] = {
 	//one
 	{ "Firefox",            NULL,       NULL,               1,          False,      False,       -1 },
 	//two
-	{ "Skype",              NULL, "jente_etnej - Skype™",   1 << 1,     False,      True,        -1 },
-	{ "Skype",              NULL,   "Skype™ Chat",          1 << 1,     False,      False,       -1 },
-	//{ "Skype",              NULL,    "Call with",           1 << 1,     True,       False,       -1 },
+	{ "Skype",              NULL,       NULL,               1 << 1,     False,      True,        -1 },
 	//three
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
 	//four
@@ -62,7 +59,7 @@ static const Rule rules[] = {
     { "Evince",             NULL,       NULL,               1 << 5,     False,      False,       -1 },
     { "libreoffice",        NULL,       NULL,               1 << 5,     False,      False,       -1 },
     //seven
-	{ NULL, "nl-tudelft-bw4t-server-BW4TEnvironment", NULL, 1 << 6, True, True, 0 },
+	{ "nl-tudelft-bw4t-server-BW4TEnvironment", NULL, NULL, 1 << 6, True, True, 0 },
 };
 
 /* commands */
@@ -130,26 +127,17 @@ static Key keys[] = {
 	TAGKEYS(                    XK_5,                       4)
 	TAGKEYS(                    XK_6,                       5)
 	TAGKEYS(                    XK_7,                       6)
-	{ MODKEY,                   XK_Up,                      focusstack,     {.i = +1 } },
-	{ MODKEY,                   XK_Down,                    focusstack,     {.i = -1 } },
+	{ MODKEY,                   XK_j,                       focusstack,     {.i = +1 } },
+	{ MODKEY,                   XK_k,                       focusstack,     {.i = -1 } },
 	{ MODKEY|ShiftMask,         XK_Up,                      pushup,         {0} },
 	{ MODKEY|ShiftMask,         XK_Down,                    pushdown,       {0} },
 
 	{ MODKEY,                   XK_dead_grave,              view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,         XK_dead_grave,              tag,            {.ui = ~0 } }, //1?
-	{ MONKEY,                   XK_Left,                    focusmon,       {.i = -1 } },
-	{ MONKEY,                   XK_Right,                   focusmon,       {.i = +1 } },
-	{ MONKEY|ShiftMask,         XK_Left,                    tagmon,         {.i = -1 } },
-	{ MONKEY|ShiftMask,         XK_Right,                   tagmon,         {.i = +1 } },
-
-	/*{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },*/
+	{ MODKEY|ShiftMask,         XK_dead_grave,              tag,            {.ui = ~0 } },
+	{ MODKEY,                   XK_comma,                    focusmon,       {.i = -1 } },
+	{ MODKEY,                   XK_period,                   focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,         XK_comma,                    tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,         XK_period,                   tagmon,         {.i = +1 } },
 };
 
 /* button definitions */

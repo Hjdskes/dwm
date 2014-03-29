@@ -38,8 +38,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
-#include <X11/Xft/Xft.h>
-#include <pango/pango.h>
 #ifdef XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
@@ -152,6 +150,7 @@ static Bool applysizehints(Client *c, int *x, int *y, int *w, int *h, Bool inter
 static void arrange(Monitor *m);
 static void arrangemon(Monitor *m);
 static void attach(Client *c);
+static void attachaside(Client *c);
 static void attachstack(Client *c);
 static void bstack(Monitor *m);
 static void buttonpress(XEvent *e);
@@ -779,7 +778,7 @@ drawbar(Monitor *m) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i], 0);
-		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
+		drw_rect(drw, x, 0, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
 				occ & 1 << i);
 		x += w;
 	}
@@ -859,7 +858,7 @@ focus(Client *c) {
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, True);
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel].border->rgb.pixel);
+		XSetWindowBorder(dpy, c->win, scheme[SchemeSel].border->rgb);
 		setfocus(c);
 	}
 	else {
@@ -1108,7 +1107,7 @@ manage(Window w, XWindowAttributes *wa) {
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->rgb.pixel);
+	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->rgb);
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatewindowtype(c);
 	updatesizehints(c);
@@ -1628,11 +1627,11 @@ setup(void) {
 	/* init screen */
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
-	fnt = drw_font_create(dpy, screen, font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
-	bh = fnt->h + 6;
 	drw = drw_create(dpy, screen, root, sw, sh);
+	fnt = drw_font_create(drw, font);
+	bh = fnt->h + 6;
 	drw_setfont(drw, fnt);
 	updategeom();
 	/* init atoms */
@@ -1815,7 +1814,7 @@ unfocus(Client *c, Bool setfocus) {
 	if(!c)
 		return;
 	grabbuttons(c, False);
-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm].border->rgb.pixel);
+	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm].border->rgb);
 	if(setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -2089,7 +2088,7 @@ updatewmhints(Client *c) {
 		else {
 			c->isurgent = (wmh->flags & XUrgencyHint) ? True : False;
 			if(c->isurgent)
-				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg].border->rgb.pixel);
+				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg].border->rgb);
 		}
 		if(wmh->flags & InputHint)
 			c->neverfocus = !wmh->input;
