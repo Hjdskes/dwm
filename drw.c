@@ -125,16 +125,12 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 		return;
 	cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
 	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
-	cairo_move_to(drw->context, x+1.5, y+1.5);
 	if(filled) {
 		cairo_rectangle(drw->context, x+1, y+1, dx+1, dx+1);
 		cairo_fill(drw->context);
 	}
 	else if(empty) {
-		cairo_rel_line_to(drw->context, dx, 0);
-		cairo_rel_line_to(drw->context, 0, dx);
-		cairo_rel_line_to(drw->context, -dx, 0);
-		cairo_close_path(drw->context);
+		cairo_rectangle(drw->context, x+1.5, y+1.5, dx, dx);
 		cairo_stroke(drw->context);
 	}
 }
