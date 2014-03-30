@@ -4,10 +4,9 @@
 - consider onscreenkeyboard hooks for tablet deployment
 
 **ToDo:**
-* XftDraw to global? w/ XftDrawChange? 
-* Use button6 and 7 everywhere
-* Fix attachaside not being able to move to master
-* Implement Cairo w/ Pango?
 * Resize tiled clients by dragging window borders?
-* Try adapt the way multimonitor is treated: make it like GNOME Shell - basically make the extra monitor one single tag on its own.
-* Multi-monitor friendly keybinds
+cairo clips on different bar parts to not redraw everything
+transparency from config.h
+change the way colors are setup to allow easy gradients n stuff
+on a two monitor setup, the bars are on the wrong screen
+

@@ -128,15 +128,23 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 
 void //TODO clipping? save/restore?
 drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
+	cairo_pattern_t *pat;
 	char buf[256];
 	int i, tx, ty, th, len, olen;
 	Extnts tex;
 
 	if(!drw || !drw->scheme)
 		return;
-	cairo_set_source_rgb(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b);
+	pat = cairo_pattern_create_linear(x, y,  x, h);
+	cairo_pattern_add_color_stop_rgba(pat, 1, 0, 0, 0, 1);
+	cairo_pattern_add_color_stop_rgba(pat, 0, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 1);
 	cairo_rectangle(drw->context, x, y, w, h);
+	cairo_set_source(drw->context, pat);
 	cairo_fill(drw->context);
+	cairo_pattern_destroy(pat);
+	/*cairo_set_source_rgb(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b);
+	cairo_rectangle(drw->context, x, y, w, h);
+	cairo_fill(drw->context);*/
 	if(!text || !drw->font)
 		return;
 	olen = strlen(text);
@@ -166,7 +174,6 @@ drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 	cairo_xlib_surface_set_drawable(drw->surface, win, w, h);
 	cairo_set_source_surface(drw->context, drw->surface, x, y);
 	cairo_paint(drw->context);
-	//TODO needed? cairo_show_page(drw->context);
 	XSync(drw->dpy, False); //FIXME needed?
 }
 
