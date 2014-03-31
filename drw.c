@@ -12,6 +12,8 @@
 Drw *
 drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h) {
 	Drw *drw = (Drw *)calloc(1, sizeof(Drw));
+	cairo_surface_t *surface;
+
 	if(!drw)
 		return NULL;
 	drw->dpy = dpy;
@@ -19,8 +21,9 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	drw->root = root;
 	drw->w = w;
 	drw->h = h;
-	drw->surface = cairo_xlib_surface_create(dpy, root, DefaultVisual(dpy, screen), w, h);
-	drw->context = cairo_create(drw->surface);
+	surface = cairo_xlib_surface_create(dpy, root, DefaultVisual(dpy, screen), w, h);
+	drw->context = cairo_create(surface);
+	cairo_surface_destroy(surface);
 	cairo_set_line_width(drw->context, 1);
 	return drw;
 }
@@ -31,13 +34,10 @@ drw_resize(Drw *drw, unsigned int w, unsigned int h) {
 		return;
 	drw->w = w;
 	drw->h = h;
-	if(drw->surface)
-		cairo_xlib_surface_set_size(drw->surface, w, h);
 }
 
 void
 drw_free(Drw *drw) {
-	cairo_surface_finish(drw->surface);
 	cairo_destroy(drw->context);
 	free(drw);
 }
@@ -180,9 +180,12 @@ void
 drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
-	cairo_xlib_surface_set_drawable(drw->surface, win, w, h);
-	cairo_set_source_surface(drw->context, drw->surface, x, y);
-	cairo_paint(drw->context);
+	cairo_surface_t *surface;
+
+	surface = cairo_get_target(drw->context);
+	cairo_xlib_surface_set_drawable(surface, win, w, h);
+	cairo_set_source_surface(drw->context, surface, x, y);
+	//cairo_surface_destroy(surface);
 	XSync(drw->dpy, False); //FIXME needed?
 }
 

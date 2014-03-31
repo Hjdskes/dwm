@@ -32,7 +32,6 @@ typedef struct {
 	int screen;
 	Window root;
 	cairo_t *context;
-	cairo_surface_t *surface;
 	ClrScheme *scheme;
 	Fnt *font;
 } Drw;
