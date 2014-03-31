@@ -73,6 +73,8 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	Clr *clr;
 	Colormap cmap;
 	XColor color;
+	char *dup, *str;
+	int alpha;
 
 	if(!drw)
 		return NULL;
@@ -80,13 +82,20 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	if(!clr)
 		return NULL;
 	cmap = DefaultColormap(drw->dpy, drw->screen);
-	if(!XAllocNamedColor(drw->dpy, cmap, clrname, &color, &color))
-		die("error, cannot allocate color '%s'\n", clrname);
+
+	dup = strdup(clrname);
+	str = strtok(dup, " ");
+	if(!XAllocNamedColor(drw->dpy, cmap, str, &color, &color))
+		die("error, cannot allocate color '%s'\n", str);
 	clr->r = ((color.pixel >> 16) & 0xFF) / 255.0;
 	clr->g = ((color.pixel >> 8) & 0xFF) / 255.0;
 	clr->b = (color.pixel & 0xFF) / 255.0;
 	clr->rgb = color.pixel;
 
+	str = strtok(NULL, " ");
+	alpha = strtol(str, NULL, 10);
+	clr->a = (alpha & 0xFF) / 255.0;
+	free(dup);
 	return clr;
 }
 
@@ -137,12 +146,12 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		return;
 	pat = cairo_pattern_create_linear(x, y,  x, h);
 	cairo_pattern_add_color_stop_rgba(pat, 1, 0, 0, 0, 1);
-	cairo_pattern_add_color_stop_rgba(pat, 0, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 1);
+	cairo_pattern_add_color_stop_rgba(pat, 0, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, drw->scheme->bg->a);
 	cairo_rectangle(drw->context, x, y, w, h);
 	cairo_set_source(drw->context, pat);
 	cairo_fill(drw->context);
 	cairo_pattern_destroy(pat);
-	/*cairo_set_source_rgb(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b);
+	/*cairo_set_source_rgba(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, drw->scheme->bg->a);
 	cairo_rectangle(drw->context, x, y, w, h);
 	cairo_fill(drw->context);*/
 	if(!text || !drw->font)

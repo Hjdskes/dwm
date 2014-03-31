@@ -11,14 +11,14 @@
 
 /* appearance */
 static const char font[]                 = "Sans 8";
-static const char normbordercolor[]      = "#707070";
-static const char normbgcolor[]          = "#1D1F21";
-static const char normfgcolor[]          = "#707070";
-static const char selbordercolor[]       = "#F9F9F9";
-static const char selbgcolor[]           = "#1D1F21";
-static const char selfgcolor[]           = "#F9F9F9";
-static const char urgbgcolor[]           = "#1D1F21";
-static const char urgfgcolor[]           = "#A54242";
+static const char normbordercolor[]      = "#707070 100";
+static const char normbgcolor[]          = "#1D1F21 100";
+static const char normfgcolor[]          = "#707070 100";
+static const char selbordercolor[]       = "#F9F9F9 100";
+static const char selbgcolor[]           = "#1D1F21 100";
+static const char selfgcolor[]           = "#F9F9F9 100";
+static const char urgbgcolor[]           = "#1D1F21 100";
+static const char urgfgcolor[]           = "#A54242 100";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
