@@ -12,6 +12,7 @@
 Drw *
 drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h) {
 	Drw *drw = (Drw *)calloc(1, sizeof(Drw));
+	cairo_surface_t *surface;
 
 	if(!drw)
 		return NULL;
@@ -20,8 +21,9 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	drw->root = root;
 	drw->w = w;
 	drw->h = h;
-	drw->surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
-	drw->context = cairo_create(drw->surface);
+	surface = cairo_xlib_surface_create(dpy, root, DefaultVisual(dpy, screen), w, h);
+	drw->context = cairo_create(surface);
+	cairo_surface_destroy(surface);
 	cairo_set_line_width(drw->context, 1);
 	return drw;
 }
@@ -121,7 +123,7 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 
 	if(!drw || !drw->font || !drw->scheme)
 		return;
-	cairo_set_source_rgba(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b, 1.0);
+	cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
 	dx = (drw->font->h + 2) / 4;
 	if(filled) {
 		cairo_rectangle(drw->context, x+1, y+1, dx+1, dx+1);
@@ -144,12 +146,12 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		return;
 	pat = cairo_pattern_create_linear(x, y,  x, h);
 	cairo_pattern_add_color_stop_rgba(pat, 1, 0, 0, 0, 1);
-	cairo_pattern_add_color_stop_rgba(pat, 0, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 1.0);
+	cairo_pattern_add_color_stop_rgba(pat, 0, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, drw->scheme->bg->a);
 	cairo_rectangle(drw->context, x, y, w, h);
 	cairo_set_source(drw->context, pat);
 	cairo_fill(drw->context);
 	cairo_pattern_destroy(pat);
-	/*cairo_set_source_rgba(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 1.0);
+	/*cairo_set_source_rgba(drw->context, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, drw->scheme->bg->a);
 	cairo_rectangle(drw->context, x, y, w, h);
 	cairo_fill(drw->context);*/
 	if(!text || !drw->font)
@@ -169,7 +171,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 	pango_layout_set_text(drw->font->layout, buf, len);
 	cairo_move_to(drw->context, tx, ty);
-	cairo_set_source_rgba(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b, 1.0);
+	cairo_set_source_rgb(drw->context, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
 	pango_cairo_update_layout(drw->context, drw->font->layout);
 	pango_cairo_show_layout(drw->context, drw->font->layout);
 }
@@ -179,14 +181,11 @@ drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
 	cairo_surface_t *surface;
-	cairo_t *context;
 
-	surface = cairo_xlib_surface_create(drw->dpy, win, DefaultVisual(drw->dpy, drw->screen), w, h);
-	context = cairo_create(surface);
-	cairo_set_source_surface(context, drw->surface, x, y);
-	cairo_paint(context);
-	cairo_destroy(context);
-	cairo_surface_destroy(surface);
+	surface = cairo_get_target(drw->context);
+	cairo_xlib_surface_set_drawable(surface, win, w, h);
+	cairo_set_source_surface(drw->context, surface, x, y);
+	//cairo_surface_destroy(surface);
 	XSync(drw->dpy, False); //FIXME needed?
 }
 
