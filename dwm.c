@@ -768,7 +768,6 @@ drawbar(Monitor *m) {
 	char clock[38];
 	Client *c;
 
-	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 	for(c = m->clients; c; c = c->next) {
 		occ |= c->tags;
 		if(c->isurgent)
@@ -805,6 +804,7 @@ drawbar(Monitor *m) {
 		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
 		drw_text(drw, x, 0, w, bh, clock);
 	}
+	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
 
 void
