@@ -768,13 +768,13 @@ drawbar(Monitor *m) {
 	char clock[38];
 	Client *c;
 
-	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 	for(c = m->clients; c; c = c->next) {
 		occ |= c->tags;
 		if(c->isurgent)
 			urg |= c->tags;
 	}
 	x = 0;
+	drw_setdrawable(drw, m->barwin, m->ww, bh);
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
@@ -805,6 +805,7 @@ drawbar(Monitor *m) {
 		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
 		drw_text(drw, x, 0, w, bh, clock);
 	}
+	drw_map(drw, 0, 0);
 }
 
 void

@@ -30,8 +30,10 @@ typedef struct {
 	unsigned int w, h;
 	Display *dpy;
 	int screen;
-	Window root;
-	cairo_t *context;
+	cairo_t *ctx;
+	cairo_surface_t *buf;
+	cairo_t *foo;
+	cairo_surface_t *bar;
 	ClrScheme *scheme;
 	Fnt *font;
 } Drw;
@@ -69,4 +71,5 @@ void drw_rect(Drw *drw, int x, int y, int filled, int empty);
 void drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 
 /* Map functions */
-void drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h);
+void drw_setdrawable(Drw *drw, Window barwin, unsigned int w, unsigned int h);
+void drw_map(Drw *drw, int x, int y);
