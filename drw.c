@@ -128,23 +128,13 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 
 	if(!drw || !drw->font || !drw->scheme)
 		return;
-	cairo_set_source_rgb(drw->ctx, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
 	dx = (drw->font->h + 2) / 4;
+	cairo_set_source_rgb(drw->ctx, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
 	if(filled) {
-		cairo_save(drw->ctx);
-		cairo_set_operator(drw->ctx, CAIRO_OPERATOR_CLEAR);
-		cairo_rectangle(drw->ctx, x+1, y+1, dx+1, dx+1);
-		cairo_fill(drw->ctx);
-		cairo_restore(drw->ctx);
 		cairo_rectangle(drw->ctx, x+1, y+1, dx+1, dx+1);
 		cairo_fill(drw->ctx);
 	}
 	else if(empty) {
-		cairo_save(drw->ctx);
-		cairo_set_operator(drw->ctx, CAIRO_OPERATOR_CLEAR);
-		cairo_rectangle(drw->ctx, x+1.5, y+1.5, dx, dx);
-		cairo_stroke(drw->ctx);
-		cairo_restore(drw->ctx);
 		cairo_rectangle(drw->ctx, x+1.5, y+1.5, dx, dx);
 		cairo_stroke(drw->ctx);
 	}
@@ -152,18 +142,13 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 
 void
 drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
-	cairo_pattern_t *pat;
+	//cairo_pattern_t *pat;
 	char buf[256];
 	int i, tx, ty, th, len, olen;
 	Extnts tex;
 
 	if(!drw || !drw->scheme)
 		return;
-	cairo_save(drw->ctx);
-	cairo_set_operator(drw->ctx, CAIRO_OPERATOR_CLEAR);
-	cairo_rectangle(drw->ctx, x, y, w, h);
-	cairo_fill(drw->ctx);
-	cairo_restore(drw->ctx);
 	/*pat = cairo_pattern_create_linear(x, y,  x, h);
 	cairo_pattern_add_color_stop_rgba(pat, 1, 0, 0, 0, 1);
 	cairo_pattern_add_color_stop_rgba(pat, 0, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 0.1);
@@ -197,16 +182,20 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 }
 
 void
-drw_setdrawable(Drw *drw, Window barwin, unsigned int w, unsigned int h) {
+drw_clear(Drw *drw) {
 	if(!drw)
 		return;
-	cairo_xlib_surface_set_drawable(drw->bar, barwin, w, h);
+	cairo_save(drw->ctx);
+	cairo_set_operator(drw->ctx, CAIRO_OPERATOR_CLEAR);
+	cairo_paint(drw->ctx);
+	cairo_restore(drw->ctx);
 }
 
 void
-drw_map(Drw *drw, int x, int y) {
+drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
+	cairo_xlib_surface_set_drawable(drw->bar, barwin, w, h);
 	cairo_set_source_surface(drw->foo, drw->buf, x, y);
 	cairo_paint(drw->foo);
 	XSync(drw->dpy, False); //FIXME needed?

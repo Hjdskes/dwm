@@ -71,5 +71,5 @@ void drw_rect(Drw *drw, int x, int y, int filled, int empty);
 void drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 
 /* Map functions */
-void drw_setdrawable(Drw *drw, Window barwin, unsigned int w, unsigned int h);
-void drw_map(Drw *drw, int x, int y);
+void drw_clear(Drw *drw);
+void drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h);

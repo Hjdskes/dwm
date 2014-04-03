@@ -5,8 +5,7 @@
 
 **ToDo:**
 * Resize tiled clients by dragging window borders?
-cairo clips on different bar parts to not redraw everything
 transparency from config.h
 change the way colors are setup to allow easy gradients n stuff
 on a two monitor setup, the bars are on the wrong screen
-
+fix transparency/fading in bar
