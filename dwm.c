@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <X11/cursorfont.h>
@@ -65,7 +64,7 @@ enum { NetSupported, NetWMName, NetWMState, NetWMFullscreen,
        NetWMDemandsAttention, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
-enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkClock,
+enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast }; /* clicks */
 
 typedef union {
@@ -499,7 +498,7 @@ buttonpress(XEvent *e) {
 		else if(ev->x > selmon->ww - TEXTW(stext))
 			click = ClkStatusText;
 		else
-			click = ClkClock;
+			click = ClkWinTitle;
 	}
 	else if((c = wintoclient(ev->window))) {
 		focus(c);
@@ -764,8 +763,6 @@ void
 drawbar(Monitor *m) {
 	int x, xx, w;
 	unsigned int i, occ = 0, urg = 0;
-	time_t current;
-	char clock[38];
 	Client *c;
 
 	for(c = m->clients; c; c = c->next) {
@@ -774,13 +771,11 @@ drawbar(Monitor *m) {
 			urg |= c->tags;
 	}
 	x = 0;
-	drw_clear(drw);
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, tags[i]);
-		drw_rect(drw, x, 0, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-				occ & 1 << i);
+		drw_rect(drw, x, 0, m == selmon && selmon->sel && selmon->sel->tags & 1 << i, occ & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
@@ -797,13 +792,15 @@ drawbar(Monitor *m) {
 	drw_text(drw, x, 0, w, bh, stext);
 	if((w = x - xx) > bh) {
 		x = xx;
-		time(&current);
-		strftime(clock, 38, clock_fmt, localtime(&current));
-		drw_setscheme(drw, &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, NULL);
-		w = MIN(w, TEXTW(clock));
-		x = MAX(x, (m->mw / 2) - (TEXTW(clock) / 2));
-		drw_text(drw, x, 0, w, bh, clock);
+        if(m->sel) {
+            drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
+            drw_text(drw, x, 0, w, bh, m->sel->name);
+            drw_rect(drw, x, 0, m->sel->isfixed, m->sel->isfloating);
+        }
+        else {
+            drw_setscheme(drw, &scheme[SchemeNorm]);
+            drw_text(drw, x, 0, w, bh, NULL);
+        }
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
@@ -859,7 +856,7 @@ focus(Client *c) {
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, True);
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel].border->rgb);
+		XSetWindowBorder(dpy, c->win, scheme[SchemeSel].border->rgb.pixel);
 		setfocus(c);
 	}
 	else {
@@ -1108,7 +1105,7 @@ manage(Window w, XWindowAttributes *wa) {
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->rgb);
+	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->rgb.pixel);
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatewindowtype(c);
 	updatesizehints(c);
@@ -1297,7 +1294,8 @@ propertynotify(XEvent *e) {
 		}
 		if(ev->atom == XA_WM_NAME || ev->atom == netatom[NetWMName]) {
 			updatetitle(c);
-			drawbars();
+            if(c == c->mon->sel)
+			    drawbar(c->mon);
 		}
 		if(ev->atom == netatom[NetWMWindowType])
 			updatewindowtype(c);
@@ -1815,7 +1813,7 @@ unfocus(Client *c, Bool setfocus) {
 	if(!c)
 		return;
 	grabbuttons(c, False);
-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm].border->rgb);
+	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm].border->rgb.pixel);
 	if(setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -2089,7 +2087,7 @@ updatewmhints(Client *c) {
 		else {
 			c->isurgent = (wmh->flags & XUrgencyHint) ? True : False;
 			if(c->isurgent)
-				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg].border->rgb);
+				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg].border->rgb.pixel);
 		}
 		if(wmh->flags & InputHint)
 			c->neverfocus = !wmh->input;
@@ -2190,7 +2188,7 @@ main(int argc, char *argv[]) {
 		die("dwm-"VERSION", © 2006-2012 dwm engineers, see LICENSE for details\n");
 	else if(argc != 1)
 		die("usage: dwm [-v]\n");
-	if(!setlocale(LC_ALL, "") || !XSupportsLocale())
+	if(!setlocale(LC_CTYPE, "") || !XSupportsLocale())
 		fputs("warning: no locale support\n", stderr);
 	if(!(dpy = XOpenDisplay(NULL)))
 		die("dwm: cannot open display\n");

@@ -10,22 +10,21 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Sans 8";
-static const char normbordercolor[]      = "#707070 100";
-static const char normbgcolor[]          = "#000000 100";
-static const char normfgcolor[]          = "#707070 100";
-static const char selbordercolor[]       = "#F9F9F9 100";
-static const char selbgcolor[]           = "#000000 100";
-static const char selfgcolor[]           = "#F9F9F9 100";
-static const char urgbgcolor[]           = "#000000 100";
-static const char urgfgcolor[]           = "#A54242 100";
+static const char font[]                 = "Sans 9";
+static const char normbordercolor[]      = "#707070";
+static const char normbgcolor[]          = "#FFFFFF";
+static const char normfgcolor[]          = "#707070";
+static const char selbordercolor[]       = "#DE935F";
+static const char selbgcolor[]           = "#FFFFFF";
+static const char selfgcolor[]           = "#F9F9F9";
+static const char urgbgcolor[]           = "#1D1F21";
+static const char urgfgcolor[]           = "#FFFFFF";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
-static const char clock_fmt[]            = "%a %d %b, %R";
 static const int nmaster                 = 1;
 static const Bool showbar                = True;
-static const Bool topbar                 = False;
+static const Bool topbar                 = True;
 static const Bool resizehints            = False;
 
 static const char *tags[] = { "web", "skype", "term", "code", "media", "doc", "n/a" };
@@ -41,25 +40,16 @@ static const Layout layouts[] = {
 static const Rule rules[] = {
     /*WM_CLASS              WM_CLASS    WM_NAME
       class                 instance    title               tags mask   isfloating  attachaside  monitor */
-	//one
-	{ "Firefox",            NULL,       NULL,               1,          False,      False,       -1 },
-	//two
+	{ "Firefox",            NULL,       NULL,               1 << 0,     False,      False,       -1 },
 	{ "Skype",              NULL,       NULL,               1 << 1,     False,      True,        -1 },
-	//three
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
-	//four
-	{ "Gedit",              NULL,       NULL,               1 << 3,     False,      False,       -1 },
 	{ "Eclipse",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
 	{ "Java",               NULL,       NULL,               1 << 3,     True,       False,       -1 },
-    //five
     { "Audacious",          NULL,       NULL,               1 << 4,     False,      False,       -1 },
     { "MPlayer",            NULL,       NULL,               1 << 4,     True,       False,       -1 },
     { "Transmission-gtk",   NULL,       NULL,               1 << 4,     False,      False,       -1 },
-    //six
-    { "Evince",             NULL,       NULL,               1 << 5,     False,      False,       -1 },
+    { "Zathura",             NULL,       NULL,               1 << 5,     False,      False,       -1 },
     { "libreoffice",        NULL,       NULL,               1 << 5,     False,      False,       -1 },
-    //seven
-	{ "nl-tudelft-bw4t-server-BW4TEnvironment", NULL, NULL, 1 << 6, True, True, 0 },
 };
 
 /* commands */
@@ -134,17 +124,17 @@ static Key keys[] = {
 
 	{ MODKEY,                   XK_dead_grave,              view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,         XK_dead_grave,              tag,            {.ui = ~0 } },
-	{ MODKEY,                   XK_comma,                    focusmon,       {.i = -1 } },
-	{ MODKEY,                   XK_period,                   focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,         XK_comma,                    tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,         XK_period,                   tagmon,         {.i = +1 } },
+	{ MODKEY,                   XK_comma,                   focusmon,       {.i = -1 } },
+	{ MODKEY,                   XK_period,                  focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,         XK_comma,                   tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,         XK_period,                  tagmon,         {.i = +1 } },
 };
 
 /* button definitions */
-/* click can be ClkLtSymbol, ClkStatusText, ClkClock, ClkClientWin, or ClkRootWin */
+/* click can be ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkClock,             0,              Button2,        killclient,     {0} },
+	{ ClkWinTitle,          0,              Button2,        killclient,     {0} },
 	{ ClkStatusText,        0,              Button3,        spawn,          {.v = volmute } },
 	{ ClkStatusText,        0,              Button4,        spawn,          {.v = volup } },
 	{ ClkStatusText,        0,              Button5,        spawn,          {.v = voldown } },

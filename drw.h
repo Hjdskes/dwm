@@ -1,14 +1,10 @@
 /* See LICENSE file for copyright and license details. */
 
-#include <cairo-xlib.h>
+#include <X11/Xft/Xft.h>
 #include <pango/pango.h>
 
 typedef struct {
-	double r;
-	double g;
-	double b;
-	double a;
-	unsigned long rgb;
+	XftColor rgb;
 } Clr;
 
 typedef struct {
@@ -30,10 +26,10 @@ typedef struct {
 	unsigned int w, h;
 	Display *dpy;
 	int screen;
-	cairo_t *ctx;
-	cairo_surface_t *buf;
-	cairo_t *foo;
-	cairo_surface_t *bar;
+	Window root;
+	Drawable drawable;
+	XftDraw *xftdrawable;
+	GC gc;
 	ClrScheme *scheme;
 	Fnt *font;
 } Drw;
@@ -71,5 +67,4 @@ void drw_rect(Drw *drw, int x, int y, int filled, int empty);
 void drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 
 /* Map functions */
-void drw_clear(Drw *drw);
 void drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h);
