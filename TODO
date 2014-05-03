@@ -2,10 +2,3 @@
 		affecting the keyboard grab, see scrot -s for example)
 - add updategeom() hook for external tools like dzen
 - consider onscreenkeyboard hooks for tablet deployment
-
-**ToDo:**
-* Resize tiled clients by dragging window borders?
-transparency from config.h
-change the way colors are setup to allow easy gradients n stuff
-on a two monitor setup, the bars are on the wrong screen
-fix transparency/fading in bar

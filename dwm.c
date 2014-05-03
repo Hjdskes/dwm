@@ -710,7 +710,7 @@ createmon(void) {
 	m->topbar = topbar;
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
-	strncpy(m->ltsymbol, m->lt[0]->symbol, sizeof m->ltsymbol);
+	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 	return m;
 }
 
@@ -792,15 +792,15 @@ drawbar(Monitor *m) {
 	drw_text(drw, x, 0, w, bh, stext);
 	if((w = x - xx) > bh) {
 		x = xx;
-        if(m->sel) {
-            drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-            drw_text(drw, x, 0, w, bh, m->sel->name);
-            drw_rect(drw, x, 0, m->sel->isfixed, m->sel->isfloating);
-        }
-        else {
-            drw_setscheme(drw, &scheme[SchemeNorm]);
-            drw_text(drw, x, 0, w, bh, NULL);
-        }
+		if(m->sel) {
+			drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
+			drw_text(drw, x, 0, w, bh, m->sel->name);
+			drw_rect(drw, x, 0, m->sel->isfixed, m->sel->isfloating);
+		}
+		else {
+			drw_setscheme(drw, &scheme[SchemeNorm]);
+			drw_text(drw, x, 0, w, bh, NULL);
+		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
@@ -1702,6 +1702,8 @@ sigchld(int unused) {
 
 void
 spawn(const Arg *arg) {
+	if(arg->v == dmenucmd)
+		dmenumon[0] = '0' + selmon->num;
 	if(fork() == 0) {
 		if(dpy)
 			close(ConnectionNumber(dpy));

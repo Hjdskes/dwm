@@ -38,8 +38,7 @@ static const Layout layouts[] = {
 };
 
 static const Rule rules[] = {
-	/*WM_CLASS              WM_CLASS    WM_NAME
-      class                 instance    title               tags mask   isfloating  attachaside  monitor */
+	/*WM_CLASS              WM_CLASS    WM_NAME            tag mask  isfloating attachaside  monitor*/
 	{ "Firefox",            NULL,       NULL,               1 << 0,     False,      False,       -1 },
 	{ "Skype",              NULL,       NULL,               1 << 1,     False,      True,        -1 },
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
