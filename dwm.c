@@ -1294,8 +1294,8 @@ propertynotify(XEvent *e) {
 		}
 		if(ev->atom == XA_WM_NAME || ev->atom == netatom[NetWMName]) {
 			updatetitle(c);
-            if(c == c->mon->sel)
-			    drawbar(c->mon);
+			if(c == c->mon->sel)
+				drawbar(c->mon);
 		}
 		if(ev->atom == netatom[NetWMWindowType])
 			updatewindowtype(c);
@@ -1626,11 +1626,11 @@ setup(void) {
 	/* init screen */
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
+	fnt = drw_font_create(dpy, screen, font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
-	drw = drw_create(dpy, screen, root, sw, sh);
-	fnt = drw_font_create(drw, font);
 	bh = fnt->h + 6;
+	drw = drw_create(dpy, screen, root, sw, sh);
 	drw_setfont(drw, fnt);
 	updategeom();
 	/* init atoms */

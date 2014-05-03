@@ -46,7 +46,7 @@ drw_free(Drw *drw) {
 }
 
 Fnt *
-drw_font_create(Drw *drw, const char *fontname) {
+drw_font_create(Display *dpy, int screen, const char *fontname) {
 	Fnt *font;
 	PangoContext *context;
 	PangoFontMap *fontmap;
@@ -56,7 +56,7 @@ drw_font_create(Drw *drw, const char *fontname) {
 	if(!font)
 		return NULL;
 
-	fontmap = pango_xft_get_font_map(drw->dpy, drw->screen);
+	fontmap = pango_xft_get_font_map(dpy, screen);
 	context = pango_font_map_create_context(fontmap);
 	font->layout = pango_layout_new(context);
 	g_object_unref(context);
