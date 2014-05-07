@@ -10,15 +10,15 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Sans 9";
+static const char font[]                 = "Monospace 9";
 static const char normbordercolor[]      = "#707070";
-static const char normbgcolor[]          = "#FFFFFF";
-static const char normfgcolor[]          = "#4D4D4C";
+static const char normbgcolor[]          = "#1D1F21";
+static const char normfgcolor[]          = "#C5C8C6";
 static const char selbordercolor[]       = "#DE935F";
-static const char selbgcolor[]           = "#FFFFFF";
-static const char selfgcolor[]           = "#4A90D9";
-static const char urgbgcolor[]           = "#FFFFFF";
-static const char urgfgcolor[]           = "#C82829";
+static const char selbgcolor[]           = "#1D1F21";
+static const char selfgcolor[]           = "#81A2BE";
+static const char urgbgcolor[]           = "#1D1F21";
+static const char urgfgcolor[]           = "#A54242";
 static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
@@ -50,7 +50,8 @@ static const Rule rules[] = {
 };
 
 /* commands */
-static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Uitvoeren:", NULL };
+static char dmenumon[2] = "0";
+static const char *dmenu[]   = { "dmenu_run", "-f", "-m", dmenumon, "-p", "Execute:", NULL };
 static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *dmctl[]   = { "dmenu_netctl", NULL };
