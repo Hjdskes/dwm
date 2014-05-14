@@ -10,7 +10,7 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "Monospace 9";
+static const char font[]                 = "DejaVu Sans Mono 9";
 static const char normbordercolor[]      = "#707070";
 static const char normbgcolor[]          = "#1D1F21";
 static const char normfgcolor[]          = "#C5C8C6";
@@ -40,13 +40,13 @@ static const Layout layouts[] = {
 static const Rule rules[] = {
 	/*WM_CLASS              WM_CLASS    WM_NAME            tag mask  isfloating attachaside  monitor*/
 	{ "Firefox",            NULL,       NULL,               1 << 0,     False,      False,       -1 },
+	{ "Dwb",                NULL,       NULL,               1 << 0,     False,      False,       -1 },
 	{ "Skype",              NULL,       NULL,               1 << 1,     False,      True,        -1 },
 	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
 	{ "Eclipse",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
 	{ "Java",               NULL,       NULL,               1 << 3,     True,       False,       -1 },
 	{ "MPlayer",            NULL,       NULL,               1 << 4,     True,       False,       -1 },
 	{ "Zathura",            NULL,       NULL,               1 << 5,     False,      False,       -1 },
-	{ "libreoffice",        NULL,       NULL,               1 << 5,     False,      False,       -1 },
 };
 
 /* commands */
@@ -128,10 +128,9 @@ static Key keys[] = {
 };
 
 /* button definitions */
-/* click can be ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
+/* click can be ClkLtSymbol, ClkStatusText, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
 	/* click                event mask      button          function        argument */
-	{ ClkWinTitle,          0,              Button2,        killclient,     {0} },
 	{ ClkStatusText,        0,              Button3,        spawn,          {.v = volmute } },
 	{ ClkStatusText,        0,              Button4,        spawn,          {.v = volup } },
 	{ ClkStatusText,        0,              Button5,        spawn,          {.v = voldown } },
