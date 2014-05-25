@@ -10,10 +10,10 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-static const char font[]                 = "DejaVu Sans Mono 9";
+static const char font[]                 = "DejaVu Sans 8";
 static const char normbordercolor[]      = "#707070";
 static const char normbgcolor[]          = "#1D1F21";
-static const char normfgcolor[]          = "#C5C8C6";
+static const char normfgcolor[]          = "#F9F9F9";
 static const char selbordercolor[]       = "#DE935F";
 static const char selbgcolor[]           = "#1D1F21";
 static const char selfgcolor[]           = "#81A2BE";
