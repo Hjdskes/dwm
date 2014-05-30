@@ -1314,7 +1314,7 @@ pushup(const Arg *arg) {
 	if((c = prevtiled(sel)) && c != nexttiled(selmon->clients)) {
 		detach(sel);
 		sel->next = c;
-		for(c = selmon->clients; c->next != sel->next; c = c->next);
+		for(c = selmon->clients; c->next != sel->next; c = c->next)
 			c->next = sel;
 	}
 	focus(sel);
