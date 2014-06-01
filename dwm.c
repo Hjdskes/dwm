@@ -1613,11 +1613,11 @@ setup(void) {
 	/* init screen */
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
+	fnt = drw_font_create(font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
-	drw = drw_create(dpy, screen, root, sw, sh);
-	fnt = drw_font_create(drw, font);
 	bh = fnt->h + 6;
+	drw = drw_create(dpy, screen, root, sw, bh);
 	drw_setfont(drw, fnt);
 	updategeom();
 	/* init atoms */
