@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
-#include <X11/Xft/Xft.h>
-#include <pango/pangoxft.h>
+#include <cairo-xlib.h>
+#include <pango/pangocairo.h>
 
 #include "drw.h"
 #include "util.h"
@@ -19,10 +19,9 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	drw->root = root;
 	drw->w = w;
 	drw->h = h;
-	drw->drawable = XCreatePixmap(dpy, root, w, h, DefaultDepth(dpy, screen));
-	drw->xftdrawable = XftDrawCreate(dpy, drw->drawable, DefaultVisual(dpy, screen), DefaultColormap(dpy, screen));
-	drw->gc = XCreateGC(dpy, root, 0, NULL);
-	XSetLineAttributes(dpy, drw->gc, 1, LineSolid, CapButt, JoinMiter);
+	drw->sur = cairo_xlib_surface_create(dpy, root, DefaultVisual(dpy, screen), w, h);
+	drw->ctx = cairo_create(drw->sur);
+	cairo_set_line_width(drw->ctx, 1);
 	return drw;
 }
 
@@ -32,34 +31,27 @@ drw_resize(Drw *drw, unsigned int w, unsigned int h) {
 		return;
 	drw->w = w;
 	drw->h = h;
-	if(drw->drawable != 0)
-		XFreePixmap(drw->dpy, drw->drawable);
-	drw->drawable = XCreatePixmap(drw->dpy, drw->root, w, h, DefaultDepth(drw->dpy, drw->screen));
+	if(drw->sur != 0)
+		cairo_xlib_surface_set_size(drw->sur, w, h);
 }
 
 void
 drw_free(Drw *drw) {
-	XFreePixmap(drw->dpy, drw->drawable);
-	XftDrawDestroy(drw->xftdrawable);
-	XFreeGC(drw->dpy, drw->gc);
+	cairo_surface_destroy(drw->sur);
+	cairo_destroy(drw->ctx);
 	free(drw);
 }
 
 Fnt *
-drw_font_create(Display *dpy, int screen, const char *fontname) {
+drw_font_create(Drw *drw, const char *fontname) {
 	Fnt *font;
-	PangoContext *context;
-	PangoFontMap *fontmap;
 	PangoFontDescription *desc;
 
 	font = (Fnt *)calloc(1, sizeof(Fnt));
 	if(!font)
 		return NULL;
 
-	fontmap = pango_xft_get_font_map(dpy, screen);
-	context = pango_font_map_create_context(fontmap);
-	font->layout = pango_layout_new(context);
-	g_object_unref(context);
+	font->layout = pango_cairo_create_layout(drw->ctx);
 	desc = pango_font_description_from_string(fontname);
 	pango_layout_set_font_description(font->layout, desc);
 	pango_font_description_free(desc);
@@ -80,8 +72,7 @@ Clr *
 drw_clr_create(Drw *drw, const char *clrname) {
 	Clr *clr;
 	Colormap cmap;
-	Visual *vis;
-	XftColor color;
+	XColor color;
 
 	if(!drw)
 		return NULL;
@@ -89,10 +80,13 @@ drw_clr_create(Drw *drw, const char *clrname) {
 	if(!clr)
 		return NULL;
 	cmap = DefaultColormap(drw->dpy, drw->screen);
-	vis = DefaultVisual(drw->dpy, drw->screen);
-	if(!XftColorAllocName(drw->dpy, vis, cmap, clrname, &color))
+	if(!XAllocNamedColor(drw->dpy, cmap, clrname, &color, &color))
 		die("error, cannot allocate color '%s'\n", clrname);
-	clr->rgb = color;
+	clr->r = ((color.pixel >> 16) & 0xFF) / 255.0;
+	clr->g = ((color.pixel >> 8) & 0xFF) / 255.0;
+	clr->b = (color.pixel & 0xFF) / 255.0;
+	clr->rgb = color.pixel;
+
 	return clr;
 }
 
@@ -120,12 +114,16 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 
 	if(!drw || !drw->font || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb.pixel);
 	dx = (drw->font->h + 2) / 4;
-	if(filled)
-		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx+1, dx+1);
-	else if(empty)
-		XDrawRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx, dx);
+	cairo_set_source_rgb(drw->ctx, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
+	if(filled) {
+		cairo_rectangle(drw->ctx, x+1, y+1, dx+1, dx+1);
+		cairo_fill(drw->ctx);
+	}
+	else if(empty) {
+		cairo_rectangle(drw->ctx, x+1.5, y+1.5, dx, dx);
+		cairo_stroke(drw->ctx);
+	}
 }
 
 void
@@ -136,8 +134,9 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 
 	if(!drw || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, drw->scheme->bg->rgb.pixel);
-	XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
+	cairo_set_source_rgba(drw->ctx, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 1.0);
+	cairo_rectangle(drw->ctx, x, y, w, h);
+	cairo_fill(drw->ctx);
 	if(!text || !drw->font)
 		return;
 	olen = strlen(text);
@@ -152,17 +151,23 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	memcpy(buf, text, len);
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
-	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb.pixel);
 	pango_layout_set_text(drw->font->layout, buf, len);
-	pango_xft_render_layout(drw->xftdrawable, &drw->scheme->fg->rgb, drw->font->layout, tx * PANGO_SCALE, ty * PANGO_SCALE);
+	cairo_move_to(drw->ctx, tx, ty);
+	cairo_set_source_rgb(drw->ctx, drw->scheme->fg->r, drw->scheme->fg->g, drw->scheme->fg->b);
+	pango_cairo_update_layout(drw->ctx, drw->font->layout);
+	pango_cairo_show_layout(drw->ctx, drw->font->layout);
 }
 
-void
+void /*FIXME*/
 drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
-	XCopyArea(drw->dpy, drw->drawable, barwin, drw->gc, x, y, w, h, x, y);
+	/*cairo_xlib_surface_set_drawable(drw->bar, barwin, w, h);*/
+	cairo_paint(drw->ctx);
 	XSync(drw->dpy, False);
+	/* TODO: Perhaps new w and h will give trouble,
+	 *       so maybe switch to cairo_save/cairo_restore? */
+	/*cairo_xlib_surface_set_drawable(drw->bar, drw->root, w, h);*/
 }
 
 void

@@ -65,7 +65,7 @@ enum { NetSupported, NetWMName, NetWMState, NetWMFullscreen,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast }; /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkClientWin,
-	   ClkRootWin, ClkLast }; /* clicks */
+       ClkRootWin, ClkLast }; /* clicks */
 
 typedef union {
 	int i;
@@ -790,7 +790,6 @@ drawbar(Monitor *m) {
 	drw_text(drw, x, 0, w, bh, stext);
 	if((w = x - xx) > bh) {
 		x = xx;
-		drw_setscheme(drw, &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, NULL);
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -847,7 +846,7 @@ focus(Client *c) {
 		detachstack(c);
 		attachstack(c);
 		grabbuttons(c, True);
-		XSetWindowBorder(dpy, c->win, scheme[SchemeSel].border->rgb.pixel);
+		XSetWindowBorder(dpy, c->win, scheme[SchemeSel].border->rgb);
 		setfocus(c);
 	}
 	else {
@@ -1096,7 +1095,7 @@ manage(Window w, XWindowAttributes *wa) {
 
 	wc.border_width = c->bw;
 	XConfigureWindow(dpy, w, CWBorderWidth, &wc);
-	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->rgb.pixel);
+	XSetWindowBorder(dpy, w, scheme[SchemeNorm].border->rgb);
 	configure(c); /* propagates border_width, if size doesn't change */
 	updatewindowtype(c);
 	updatesizehints(c);
@@ -1614,11 +1613,11 @@ setup(void) {
 	/* init screen */
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
-	fnt = drw_font_create(dpy, screen, font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
-	bh = fnt->h + 6;
 	drw = drw_create(dpy, screen, root, sw, sh);
+	fnt = drw_font_create(drw, font);
+	bh = fnt->h + 6;
 	drw_setfont(drw, fnt);
 	updategeom();
 	/* init atoms */
@@ -1690,8 +1689,6 @@ sigchld(int unused) {
 
 void
 spawn(const Arg *arg) {
-	if(arg->v == dmenu)
-		dmenumon[0] = '0' + selmon->num;
 	if(fork() == 0) {
 		if(dpy)
 			close(ConnectionNumber(dpy));
@@ -1803,7 +1800,7 @@ unfocus(Client *c, Bool setfocus) {
 	if(!c)
 		return;
 	grabbuttons(c, False);
-	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm].border->rgb.pixel);
+	XSetWindowBorder(dpy, c->win, scheme[SchemeNorm].border->rgb);
 	if(setfocus) {
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -2077,7 +2074,7 @@ updatewmhints(Client *c) {
 		else {
 			c->isurgent = (wmh->flags & XUrgencyHint) ? True : False;
 			if(c->isurgent)
-				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg].border->rgb.pixel);
+				XSetWindowBorder(dpy, c->win, scheme[SchemeUrg].border->rgb);
 		}
 		if(wmh->flags & InputHint)
 			c->neverfocus = !wmh->input;

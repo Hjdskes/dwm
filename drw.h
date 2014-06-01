@@ -1,10 +1,13 @@
 /* See LICENSE file for copyright and license details. */
 
-#include <X11/Xft/Xft.h>
+#include <cairo-xlib.h>
 #include <pango/pango.h>
 
 typedef struct {
-	XftColor rgb;
+	double r;
+	double g;
+	double b;
+	unsigned long rgb;
 } Clr;
 
 typedef struct {
@@ -27,9 +30,8 @@ typedef struct {
 	Display *dpy;
 	int screen;
 	Window root;
-	Drawable drawable;
-	XftDraw *xftdrawable;
-	GC gc;
+	cairo_t *ctx;
+	cairo_surface_t *sur;
 	ClrScheme *scheme;
 	Fnt *font;
 } Drw;
@@ -45,7 +47,7 @@ void drw_resize(Drw *drw, unsigned int w, unsigned int h);
 void drw_free(Drw *drw);
 
 /* Fnt abstraction */
-Fnt *drw_font_create(Display *dpy, int screen, const char *fontname);
+Fnt *drw_font_create(Drw *drw, const char *fontname);
 void drw_font_free(Display *dpy, Fnt *font);
 void drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *extnts);
 int drw_font_getexts_width(Fnt *font, const char *text, unsigned int len);

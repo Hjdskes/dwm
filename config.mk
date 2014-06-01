@@ -15,8 +15,8 @@ XINERAMALIBS  = -lXinerama
 XINERAMAFLAGS = -DXINERAMA
 
 # includes and libs
-INCS = -I${X11INC} `pkg-config --cflags xft pangoxft`
-LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} `pkg-config --libs xft pangoxft`
+INCS = -I${X11INC} `pkg-config --cflags pangocairo`
+LIBS = -L${X11LIB} -lX11 ${XINERAMALIBS} `pkg-config --libs pangocairo`
 
 # flags
 CPPFLAGS = -D_BSD_SOURCE -D_POSIX_C_SOURCE=2 -DVERSION=\"${VERSION}\" ${XINERAMAFLAGS}

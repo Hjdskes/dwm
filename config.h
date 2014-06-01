@@ -50,8 +50,7 @@ static const Rule rules[] = {
 };
 
 /* commands */
-static char dmenumon[2] = "0";
-static const char *dmenu[]   = { "dmenu_run", "-f", "-m", dmenumon, "-p", "Execute:", NULL };
+static const char *dmenu[]   = { "dmenu_run", "-f", "-p", "Execute:", NULL };
 static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *dmctl[]   = { "dmenu_netctl", NULL };
