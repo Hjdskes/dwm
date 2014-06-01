@@ -43,15 +43,20 @@ drw_free(Drw *drw) {
 }
 
 Fnt *
-drw_font_create(Drw *drw, const char *fontname) {
+drw_font_create(const char *fontname) {
 	Fnt *font;
+	PangoContext *context;
+	PangoFontMap *fontmap;
 	PangoFontDescription *desc;
 
 	font = (Fnt *)calloc(1, sizeof(Fnt));
 	if(!font)
 		return NULL;
 
-	font->layout = pango_cairo_create_layout(drw->ctx);
+	fontmap = pango_cairo_font_map_get_default();
+	context = pango_font_map_create_context(fontmap);
+	font->layout = pango_layout_new(context);
+	g_object_unref(context);
 	desc = pango_font_description_from_string(fontname);
 	pango_layout_set_font_description(font->layout, desc);
 	pango_font_description_free(desc);
@@ -162,12 +167,12 @@ void /*FIXME*/
 drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
-	/*cairo_xlib_surface_set_drawable(drw->bar, barwin, w, h);*/
+	cairo_save(drw->ctx);
+	cairo_xlib_surface_set_drawable(drw->sur, barwin, w, h);
+	cairo_set_source_surface(drw->ctx, drw->sur, x, y);
 	cairo_paint(drw->ctx);
+	cairo_restore(drw->ctx);
 	XSync(drw->dpy, False);
-	/* TODO: Perhaps new w and h will give trouble,
-	 *       so maybe switch to cairo_save/cairo_restore? */
-	/*cairo_xlib_surface_set_drawable(drw->bar, drw->root, w, h);*/
 }
 
 void
