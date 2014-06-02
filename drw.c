@@ -14,9 +14,6 @@ drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h
 	Drw *drw = (Drw *)calloc(1, sizeof(Drw));
 	if(!drw)
 		return NULL;
-	drw->dpy = dpy;
-	drw->screen = screen;
-	drw->root = root;
 	drw->w = w;
 	drw->h = h;
 	drw->sur = cairo_xlib_surface_create(dpy, root, DefaultVisual(dpy, screen), w, h);
@@ -66,7 +63,7 @@ drw_font_create(const char *fontname) {
 }
 
 void
-drw_font_free(Display *dpy, Fnt *font) {
+drw_font_free(Fnt *font) {
 	if(!font)
 		return;
 	g_object_unref(font->layout);
@@ -74,18 +71,16 @@ drw_font_free(Display *dpy, Fnt *font) {
 }
 
 Clr *
-drw_clr_create(Drw *drw, const char *clrname) {
+drw_clr_create(Display *dpy, int screen, const char *clrname) {
 	Clr *clr;
 	Colormap cmap;
 	XColor color;
 
-	if(!drw)
-		return NULL;
 	clr = (Clr *)calloc(1, sizeof(Clr));
 	if(!clr)
 		return NULL;
-	cmap = DefaultColormap(drw->dpy, drw->screen);
-	if(!XAllocNamedColor(drw->dpy, cmap, clrname, &color, &color))
+	cmap = DefaultColormap(dpy, screen);
+	if(!XAllocNamedColor(dpy, cmap, clrname, &color, &color))
 		die("error, cannot allocate color '%s'\n", clrname);
 	clr->r = ((color.pixel >> 16) & 0xFF) / 255.0;
 	clr->g = ((color.pixel >> 8) & 0xFF) / 255.0;
@@ -114,6 +109,13 @@ drw_setscheme(Drw *drw, ClrScheme *scheme) {
 }
 
 void
+drw_setdrawable(Drw *drw, Window barwin, unsigned int w, unsigned int h) {
+	if(!drw || !barwin)
+		return;
+	cairo_xlib_surface_set_drawable(drw->sur, barwin, w, h);
+}
+
+void
 drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 	int dx;
 
@@ -137,7 +139,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	int i, tx, ty, len, olen;
 	Extnts tex;
 
-	if(!drw || !drw->scheme)
+	if(!drw || !drw->font || !drw->scheme)
 		return;
 	cairo_set_source_rgba(drw->ctx, drw->scheme->bg->r, drw->scheme->bg->g, drw->scheme->bg->b, 1.0);
 	cairo_rectangle(drw->ctx, x, y, w, h);
@@ -163,18 +165,6 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	pango_cairo_show_layout(drw->ctx, drw->font->layout);
 }
 
-void /*FIXME*/
-drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h) {
-	if(!drw)
-		return;
-	cairo_save(drw->ctx);
-	cairo_xlib_surface_set_drawable(drw->sur, barwin, w, h);
-	cairo_set_source_surface(drw->ctx, drw->sur, x, y);
-	cairo_paint(drw->ctx);
-	cairo_restore(drw->ctx);
-	XSync(drw->dpy, False);
-}
-
 void
 drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *tex) {
 	if(!font || !text)
@@ -194,19 +184,19 @@ drw_font_getexts_width(Fnt *font, const char *text, unsigned int len) {
 }
 
 Cur *
-drw_cur_create(Drw *drw, int shape) {
+drw_cur_create(Display *dpy, int shape) {
 	Cur *cur = (Cur *)calloc(1, sizeof(Cur));
 
-	if(!drw || !cur)
+	if(!cur)
 		return NULL;
-	cur->cursor = XCreateFontCursor(drw->dpy, shape);
+	cur->cursor = XCreateFontCursor(dpy, shape);
 	return cur;
 }
 
 void
-drw_cur_free(Drw *drw, Cur *cursor) {
-	if(!drw || !cursor)
+drw_cur_free(Display *dpy, Cur *cursor) {
+	if(!cursor)
 		return;
-	XFreeCursor(drw->dpy, cursor->cursor);
+	XFreeCursor(dpy, cursor->cursor);
 	free(cursor);
 }

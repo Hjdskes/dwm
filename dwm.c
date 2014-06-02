@@ -55,7 +55,7 @@
 #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X)               ((X)->h + 2 * (X)->bw)
 #define TAGMASK                 ((1 << LENGTH(tags)) - 1)
-#define TEXTW(X)                (drw_font_getexts_width(drw->font, X, strlen(X)) + drw->font->h)
+#define TEXTW(X)                (drw_font_getexts_width(m->drw->font, X, strlen(X)) + m->drw->font->h)
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
@@ -129,6 +129,7 @@ struct Monitor {
 	Client *sel;
 	Client *stack;
 	Monitor *next;
+	Drw *drw;
 	Window barwin;
 	const Layout *lt[2];
 };
@@ -271,7 +272,6 @@ static Bool running = True;
 static Cur *cursor[CurLast];
 static ClrScheme scheme[SchemeLast];
 static Display *dpy;
-static Drw *drw;
 static Fnt *fnt;
 static Monitor *mons, *selmon;
 static Window root;
@@ -532,10 +532,10 @@ cleanup(void) {
 	XUngrabKey(dpy, AnyKey, AnyModifier, root);
 	while(mons)
 		cleanupmon(mons);
-	drw_cur_free(drw, cursor[CurNormal]);
-	drw_cur_free(drw, cursor[CurResize]);
-	drw_cur_free(drw, cursor[CurMove]);
-	drw_font_free(dpy, fnt);
+	drw_cur_free(dpy, cursor[CurNormal]);
+	drw_cur_free(dpy, cursor[CurResize]);
+	drw_cur_free(dpy, cursor[CurMove]);
+	drw_font_free(fnt);
 	drw_clr_free(scheme[SchemeNorm].border);
 	drw_clr_free(scheme[SchemeNorm].bg);
 	drw_clr_free(scheme[SchemeNorm].fg);
@@ -544,7 +544,6 @@ cleanup(void) {
 	drw_clr_free(scheme[SchemeSel].fg);
 	drw_clr_free(scheme[SchemeUrg].bg);
 	drw_clr_free(scheme[SchemeUrg].fg);
-	drw_free(drw);
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
 	XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
@@ -560,6 +559,7 @@ cleanupmon(Monitor *mon) {
 		for(m = mons; m && m->next != mon; m = m->next);
 		m->next = mon->next;
 	}
+	drw_free(mon->drw);
 	XUnmapWindow(dpy, mon->barwin);
 	XDestroyWindow(dpy, mon->barwin);
 	free(mon);
@@ -632,10 +632,11 @@ configurenotify(XEvent *e) {
 		sw = ev->width;
 		sh = ev->height;
 		if(updategeom() || dirty) {
-			drw_resize(drw, sw, bh);
 			updatebars();
-			for(m = mons; m; m = m->next)
+			for(m = mons; m; m = m->next) {
+				drw_resize(m->drw, m->ww, bh);
 				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
+			}
 			focus(NULL);
 			arrange(NULL);
 		}
@@ -708,6 +709,8 @@ createmon(void) {
 	m->topbar = topbar;
 	m->lt[0] = &layouts[0];
 	m->lt[1] = &layouts[1 % LENGTH(layouts)];
+	m->drw = drw_create(dpy, screen, root, sw, bh); //FIXME: sw + bh??
+	drw_setfont(m->drw, fnt);
 	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
 	return m;
 }
@@ -771,14 +774,14 @@ drawbar(Monitor *m) {
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, tags[i]);
-		drw_rect(drw, x, 0, m == selmon && selmon->sel && selmon->sel->tags & 1 << i, occ & 1 << i);
+		drw_setscheme(m->drw, urg & 1 << i ? &scheme[SchemeUrg] : m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
+		drw_text(m->drw, x, 0, w, bh, tags[i]);
+		drw_rect(m->drw, x, 0, m == selmon && selmon->sel && selmon->sel->tags & 1 << i, occ & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, &scheme[SchemeNorm]);
-	drw_text(drw, x, 0, w, bh, m->ltsymbol);
+	drw_setscheme(m->drw, &scheme[SchemeNorm]);
+	drw_text(m->drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
 	xx = x;
 	w = TEXTW(stext);
@@ -787,12 +790,11 @@ drawbar(Monitor *m) {
 		x = xx;
 		w = m->ww - xx;
 	}
-	drw_text(drw, x, 0, w, bh, stext);
+	drw_text(m->drw, x, 0, w, bh, stext);
 	if((w = x - xx) > bh) {
 		x = xx;
-		drw_text(drw, x, 0, w, bh, NULL);
+		drw_text(m->drw, x, 0, w, bh, NULL);
 	}
-	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
 }
 
 void
@@ -1613,12 +1615,10 @@ setup(void) {
 	/* init screen */
 	screen = DefaultScreen(dpy);
 	root = RootWindow(dpy, screen);
-	fnt = drw_font_create(font);
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
+	fnt = drw_font_create(font);
 	bh = fnt->h + 6;
-	drw = drw_create(dpy, screen, root, sw, bh);
-	drw_setfont(drw, fnt);
 	updategeom();
 	/* init atoms */
 	wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -1635,18 +1635,18 @@ setup(void) {
 	netatom[NetWMWindowTypeDialog] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DIALOG", False);
 	netatom[NetClientList] = XInternAtom(dpy, "_NET_CLIENT_LIST", False);
 	/* init cursors */
-	cursor[CurNormal] = drw_cur_create(drw, XC_left_ptr);
-	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
-	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
+	cursor[CurNormal] = drw_cur_create(dpy, XC_left_ptr);
+	cursor[CurResize] = drw_cur_create(dpy, XC_sizing);
+	cursor[CurMove] = drw_cur_create(dpy, XC_fleur);
 	/* init appearance */
-	scheme[SchemeNorm].border = drw_clr_create(drw, normbordercolor);
-	scheme[SchemeNorm].bg = drw_clr_create(drw, normbgcolor);
-	scheme[SchemeNorm].fg = drw_clr_create(drw, normfgcolor);
-	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor);
-	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
-	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
-	scheme[SchemeUrg].bg = drw_clr_create(drw, urgbgcolor);
-	scheme[SchemeUrg].fg = drw_clr_create(drw, urgfgcolor);
+	scheme[SchemeNorm].border = drw_clr_create(dpy, screen, normbordercolor);
+	scheme[SchemeNorm].bg = drw_clr_create(dpy, screen, normbgcolor);
+	scheme[SchemeNorm].fg = drw_clr_create(dpy, screen, normfgcolor);
+	scheme[SchemeSel].border = drw_clr_create(dpy, screen, selbordercolor);
+	scheme[SchemeSel].bg = drw_clr_create(dpy, screen, selbgcolor);
+	scheme[SchemeSel].fg = drw_clr_create(dpy, screen, selfgcolor);
+	scheme[SchemeUrg].bg = drw_clr_create(dpy, screen, urgbgcolor);
+	scheme[SchemeUrg].fg = drw_clr_create(dpy, screen, urgfgcolor);
 	/* init bars */
 	updatebars();
 	updatestatus();
@@ -1860,6 +1860,7 @@ updatebars(void) {
 		                          CopyFromParent, DefaultVisual(dpy, screen),
 		                          CWOverrideRedirect|CWBackPixmap|CWEventMask, &wa);
 		XDefineCursor(dpy, m->barwin, cursor[CurNormal]->cursor);
+		drw_setdrawable(m->drw, m->barwin, m->ww, bh);
 		XMapRaised(dpy, m->barwin);
 	}
 }
