@@ -634,7 +634,7 @@ configurenotify(XEvent *e) {
 		if(updategeom() || dirty) {
 			updatebars();
 			for(m = mons; m; m = m->next) {
-				drw_resize(m->drw, m->ww, bh);
+				drw_resize(m->drw, sw, bh);
 				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
 			}
 			focus(NULL);
