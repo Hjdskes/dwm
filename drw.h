@@ -35,8 +35,8 @@ typedef struct {
 } Drw;
 
 typedef struct {
-	unsigned int w;
-	unsigned int h;
+	int w;
+	int h;
 } Extnts;
 
 /* Drawable abstraction */
