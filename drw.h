@@ -34,8 +34,8 @@ typedef struct {
 } Drw;
 
 typedef struct {
-	int w;
-	int h;
+	unsigned int w;
+	unsigned int h;
 } Extnts;
 
 /* Drawable abstraction */
@@ -47,7 +47,7 @@ void drw_free(Drw *drw);
 Fnt *drw_font_create(Display *dpy, const char *fontname);
 void drw_font_free(Display *dpy, Fnt *font);
 void drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *extnts);
-int drw_font_getexts_width(Fnt *font, const char *text, unsigned int len);
+unsigned int drw_font_getexts_width(Fnt *font, const char *text, unsigned int len);
 
 /* Colour abstraction */
 Clr *drw_clr_create(Drw *drw, const char *clrname);
@@ -66,4 +66,4 @@ void drw_rect(Drw *drw, int x, int y, int filled, int empty);
 void drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text);
 
 /* Map functions */
-void drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h);
+void drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h);

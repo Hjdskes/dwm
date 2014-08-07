@@ -54,7 +54,7 @@ drw_font_create(Display *dpy, const char *fontname) {
 	if(missing) {
 		while(n--)
 			fprintf(stderr, "drw: missing fontset: %s\n", missing[n]);
-			XFreeStringList(missing);
+		XFreeStringList(missing);
 	}
 	if(font->set) {
 		XFontStruct **xfonts;
@@ -132,7 +132,7 @@ drw_rect(Drw *drw, int x, int y, int filled, int empty) {
 	if(!drw || !drw->font || !drw->scheme)
 		return;
 	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb);
-	dx = (drw->font->h + 2) / 4;
+	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
 	if(filled)
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx+1, dx+1);
 	else if(empty)
@@ -172,10 +172,10 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 }
 
 void
-drw_map(Drw *drw, Window barwin, int x, int y, unsigned int w, unsigned int h) {
+drw_map(Drw *drw, Window win, int x, int y, unsigned int w, unsigned int h) {
 	if(!drw)
 		return;
-	XCopyArea(drw->dpy, drw->drawable, barwin, drw->gc, x, y, w, h, x, y);
+	XCopyArea(drw->dpy, drw->drawable, win, drw->gc, x, y, w, h, x, y);
 	XSync(drw->dpy, False);
 }
 
@@ -196,7 +196,7 @@ drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *tex) {
 	}
 }
 
-int
+unsigned int
 drw_font_getexts_width(Fnt *font, const char *text, unsigned int len) {
 	Extnts tex;
 
