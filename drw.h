@@ -1,7 +1,10 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/Xft/Xft.h>
+#include <pango/pango.h>
+
 typedef struct {
-	unsigned long rgb;
+	XftColor rgb;
 } Clr;
 
 typedef struct {
@@ -9,11 +12,8 @@ typedef struct {
 } Cur;
 
 typedef struct {
-	int ascent;
-	int descent;
-	unsigned int h;
-	XFontSet set;
-	XFontStruct *xfont;
+	int h;
+	PangoLayout *layout;
 } Fnt;
 
 typedef struct {
@@ -28,6 +28,7 @@ typedef struct {
 	int screen;
 	Window root;
 	Drawable drawable;
+	XftDraw *xftdrawable;
 	GC gc;
 	ClrScheme *scheme;
 	Fnt *font;
@@ -44,7 +45,7 @@ void drw_resize(Drw *drw, unsigned int w, unsigned int h);
 void drw_free(Drw *drw);
 
 /* Fnt abstraction */
-Fnt *drw_font_create(Display *dpy, const char *fontname);
+Fnt *drw_font_create(Display *dpy, int screen, const char *fontname);
 void drw_font_free(Display *dpy, Fnt *font);
 void drw_font_getexts(Fnt *font, const char *text, unsigned int len, Extnts *extnts);
 unsigned int drw_font_getexts_width(Fnt *font, const char *text, unsigned int len);

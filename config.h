@@ -10,17 +10,16 @@
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* appearance */
-//static const char font[]                 = "DejaVu Sans 8";
-static const char font[]                 = "-*-dina-medium-r-*-*-10-*-*-*-*-*-*-*";
-static const char normbordercolor[]      = "#2a2a2a";
-static const char normbgcolor[]          = "#181b20";
-static const char normfgcolor[]          = "#605e5a";
-static const char selbordercolor[]       = "#765636";
-static const char selbgcolor[]           = "#181b20";
-static const char selfgcolor[]           = "#765636";
-static const char urgbgcolor[]           = "#181b20";
-static const char urgfgcolor[]           = "#744b40";
-static const unsigned int borderpx       = 2;
+static const char font[]                 = "DejaVu Sans 8";
+static const char normbordercolor[]      = "#707070";
+static const char normbgcolor[]          = "#1D1F21";
+static const char normfgcolor[]          = "#F9F9F9";
+static const char selbordercolor[]       = "#DE935F";
+static const char selbgcolor[]           = "#1D1F21";
+static const char selfgcolor[]           = "#81A2BE";
+static const char urgbgcolor[]           = "#1D1F21";
+static const char urgfgcolor[]           = "#A54242";
+static const unsigned int borderpx       = 1;
 static const unsigned int snap           = 2;
 static const float mfact                 = 0.63;
 static const int nmaster                 = 1;
@@ -43,7 +42,7 @@ static const Rule rules[] = {
 	{ "Firefox",            NULL,       NULL,               1 << 0,     False,      False,       -1 },
 	{ "Dwb",                NULL,       NULL,               1 << 0,     False,      False,       -1 },
 	{ "Skype",              NULL,       NULL,               1 << 1,     False,      True,        -1 },
-	{ "URxvt",              NULL,       NULL,               1 << 2,     False,      True,        -1 },
+	{ "Termite",            NULL,       NULL,               1 << 2,     False,      True,        -1 },
 	{ "Eclipse",            NULL,       NULL,               1 << 3,     False,      False,       -1 },
 	{ "Java",               NULL,       NULL,               1 << 3,     True,       False,       -1 },
 	{ "MPlayer",            NULL,       NULL,               1 << 4,     True,       False,       -1 },
@@ -52,17 +51,17 @@ static const Rule rules[] = {
 
 /* commands */
 static char dmenumon[2] = "0";
-static const char *dmenu[]   = { "dmenu_run", "-f", "-m", dmenumon, "-p", "Uitvoeren:", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+static const char *dmenu[]   = { "dmenu_run", "-f", "-m", dmenumon, "-p", "Execute:", NULL };
 static const char *find[]    = { "dmenu_finder", NULL };
 static const char *dmfm[]    = { "dmenu_fm", NULL };
 static const char *dmctl[]   = { "dmenu_netctl", NULL };
-static const char *term[]    = { "urxvtc", NULL };
+static const char *term[]    = { "termite", NULL };
 static const char *scrot[]   = { "scrot", "/home/jente/afbeeldingen/screenshots/%d-%m-%Y-%R.png", NULL };
 static const char *xkill[]   = { "xkill", NULL };
 static const char *lock[]    = { "slock", NULL };
 static const char *soff[]    = { "xset", "dpms", "force", "off", NULL };
-static const char *sup[]     = { "xbacklight", "-inc", "20%", NULL };
-static const char *sdown[]   = { "xbacklight", "-dec", "20%", NULL };
+static const char *sup[]     = { "xbacklight", "-inc", "10", NULL };
+static const char *sdown[]   = { "xbacklight", "-dec", "10", NULL };
 static const char *halt[]    = { "dmenu_shutdown", NULL };
 static const char *volup[]   = { "amixer", "-q", "sset", "Master", "5%+", "unmute", NULL };
 static const char *voldown[] = { "amixer", "-q", "sset", "Master", "5%-", "unmute", NULL };
